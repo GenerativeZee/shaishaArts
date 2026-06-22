@@ -73,7 +73,7 @@ export default async function HomePage() {
                 SHOP NOW <ArrowRight className="w-4 h-4" />
               </Link>
               <a
-                href="https://wa.me/919897015075"
+                href="https://wa.me/message/CEM5UYC3ORSYJ1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white hover:bg-emerald-50 text-[#8B1A4A] border border-rose-200 hover:border-emerald-300 px-8 py-3.5 rounded-full font-bold shadow-sm transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"

@@ -116,7 +116,7 @@ export default function Header() {
 
           {/* WhatsApp Quick Link */}
           <a
-            href="https://wa.me/919897015075"
+            href="https://wa.me/message/CEM5UYC3ORSYJ1"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-gray-600 hover:text-emerald-500 hover:bg-emerald-50 rounded-full transition-colors"
@@ -191,7 +191,7 @@ export default function Header() {
                     <Instagram className="w-5 h-5" />
                   </a>
                   <a
-                    href="https://wa.me/919897015075"
+                    href="https://wa.me/message/CEM5UYC3ORSYJ1"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 bg-white hover:bg-emerald-50 rounded-full shadow-sm text-emerald-500 transition-colors"

@@ -22,6 +22,7 @@ interface OrderData {
   status: string;
   paymentMethod: string;
   paymentScreenshot?: string;
+  giftMessage?: string | null;
   items: OrderItem[];
 }
 
@@ -109,7 +110,12 @@ export default function OrderConfirmationPage() {
     );
   }
 
-  const { text: waText, link: waLink } = buildOrderMessage({ code: order.code, items: order.items, total: order.totalAmount });
+  const { text: waText, link: waLink } = buildOrderMessage({
+    code: order.code,
+    items: order.items,
+    total: order.totalAmount,
+    giftMessage: order.giftMessage,
+  });
 
   return (
     <div className="w-full bg-[#FFF5F8] min-h-screen">
@@ -238,43 +244,28 @@ export default function OrderConfirmationPage() {
             )}
 
             {tab === "whatsapp" && (
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-4">
                 <div className="text-center">
-                  <h3 className="font-serif font-bold text-gray-800 text-lg mb-1">
-                    Send Your Order on WhatsApp
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Copy the message below, then open WhatsApp and paste it.
-                  </p>
+                  <h3 className="font-serif font-bold text-gray-800 text-lg mb-1">Send Your Order on WhatsApp</h3>
+                  <p className="text-sm text-gray-500">Click below — WhatsApp will open with your order details already typed in.</p>
                 </div>
 
-                {/* Copyable message */}
-                <div className="relative bg-gray-50 border border-gray-200 rounded-xl p-4 text-left">
+                {/* Preview of what will be sent */}
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-left">
                   <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">{waText}</pre>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(waText);
-                      setMsgCopied(true);
-                      setTimeout(() => setMsgCopied(false), 2500);
-                    }}
-                    className="absolute top-3 right-3 flex items-center gap-1.5 bg-white border border-gray-200 text-gray-500 hover:text-emerald-600 hover:border-emerald-300 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors shadow-sm"
-                  >
-                    {msgCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                    {msgCopied ? "Copied!" : "Copy"}
-                  </button>
                 </div>
 
                 <a
                   href={waLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3.5 rounded-full font-bold shadow-md flex items-center justify-center gap-2 transition-colors"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-4 rounded-full font-bold shadow-md flex items-center justify-center gap-2 transition-colors text-base"
                 >
                   <MessageCircle className="w-5 h-5" />
-                  Open WhatsApp Chat
+                  Send Order on WhatsApp
                 </a>
                 <p className="text-xs text-gray-400 text-center">
-                  Your order ID is <span className="font-bold text-gray-600">{order.code}</span>. Keep it handy to track your order.
+                  Order ID: <span className="font-bold text-gray-600">{order.code}</span> — keep this to track your order.
                 </p>
 
                 {/* Also allow screenshot upload for WA orders */}

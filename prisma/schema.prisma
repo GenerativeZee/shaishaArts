@@ -1,0 +1,84 @@
+// ShaishaArts E-Commerce Schema
+// Using SQLite for local development (switch to postgresql for production)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       String     @id @default(cuid())
+  name     String
+  slug     String     @unique
+  parentId String?
+  parent   Category?  @relation("CatTree", fields: [parentId], references: [id])
+  children Category[] @relation("CatTree")
+  products Product[]
+}
+
+model Product {
+  id               String  @id @default(cuid())
+  name             String
+  slug             String  @unique
+  categoryId       String
+  category         Category @relation(fields: [categoryId], references: [id])
+  price            Int     // whole rupees
+  description      String
+  materials        String?
+  careInstructions String?
+  stock            Int     @default(0)
+  images           String  @default("[]") // JSON array of Cloudinary URLs (SQLite doesn't support arrays)
+  isFeatured       Boolean @default(false)
+  isBestseller     Boolean @default(false)
+  isActive         Boolean @default(true)
+  createdAt        DateTime @default(now())
+}
+
+model Order {
+  id                String              @id @default(cuid())
+  code              String              @unique // SA1001
+  customerName      String
+  phone             String
+  email             String?
+  address           String
+  city              String
+  state             String
+  pincode           String
+  items             String              // JSON [{productId,name,qty,price}]
+  totalAmount       Int
+  paymentMethod     String              @default("QR") // QR | WHATSAPP
+  paymentScreenshot String?             // Cloudinary URL
+  status            String              @default("RECEIVED")
+  history           OrderStatusHistory[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+}
+
+model OrderStatusHistory {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  status    String
+  changedAt DateTime @default(now())
+}
+
+model AdminUser {
+  id           String @id @default(cuid())
+  email        String @unique
+  passwordHash String
+  role         String @default("admin")
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  type      String   // "custom" | "bulk"
+  name      String
+  phone     String
+  email     String?
+  message   String
+  createdAt DateTime @default(now())
+}

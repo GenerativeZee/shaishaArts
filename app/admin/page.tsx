@@ -3,21 +3,11 @@ import Link from "next/link";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { prisma } from "@/lib/prisma";
 import { ShoppingBag, Clock, CheckCircle, IndianRupee, ArrowRight } from "lucide-react";
+import { STATUS_COLORS } from "@/lib/constants";
 
 const CONFIRMED_STATUSES = [
   "CONFIRMED","IN_PRODUCTION","PACKED","SHIPPED","OUT_FOR_DELIVERY","DELIVERED",
 ];
-
-const STATUS_COLORS: Record<string, string> = {
-  RECEIVED: "bg-gray-100 text-gray-700",
-  PAYMENT_VERIFICATION: "bg-amber-100 text-amber-700",
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  IN_PRODUCTION: "bg-purple-100 text-purple-700",
-  PACKED: "bg-indigo-100 text-indigo-700",
-  SHIPPED: "bg-cyan-100 text-cyan-700",
-  OUT_FOR_DELIVERY: "bg-orange-100 text-orange-700",
-  DELIVERED: "bg-emerald-100 text-emerald-700",
-};
 
 export default async function AdminDashboard() {
   const [totalOrders, pendingCount, completedCount, confirmedOrders, recentOrders] =

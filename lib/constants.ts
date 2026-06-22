@@ -33,6 +33,17 @@ export const STATUS_ICONS: Record<OrderStatus, string> = {
   DELIVERED: "🎉",
 };
 
+export const STATUS_COLORS: Record<string, string> = {
+  RECEIVED: "bg-gray-100 text-gray-700",
+  PAYMENT_VERIFICATION: "bg-amber-100 text-amber-700",
+  CONFIRMED: "bg-blue-100 text-blue-700",
+  IN_PRODUCTION: "bg-purple-100 text-purple-700",
+  PACKED: "bg-indigo-100 text-indigo-700",
+  SHIPPED: "bg-cyan-100 text-cyan-700",
+  OUT_FOR_DELIVERY: "bg-orange-100 text-orange-700",
+  DELIVERED: "bg-emerald-100 text-emerald-700",
+};
+
 export function isValidTransition(current: string, next: string): boolean {
   const currentIdx = ORDER_STATUSES.indexOf(current as OrderStatus);
   const nextIdx = ORDER_STATUSES.indexOf(next as OrderStatus);

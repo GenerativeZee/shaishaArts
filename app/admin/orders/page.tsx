@@ -2,23 +2,12 @@ import React from "react";
 import Link from "next/link";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { prisma } from "@/lib/prisma";
-import { ORDER_STATUSES } from "@/lib/constants";
+import { ORDER_STATUSES, STATUS_COLORS } from "@/lib/constants";
 import { Eye } from "lucide-react";
 
 interface AdminOrdersPageProps {
   searchParams: Promise<{ status?: string; search?: string }>;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-  RECEIVED: "bg-gray-100 text-gray-700",
-  PAYMENT_VERIFICATION: "bg-amber-100 text-amber-700",
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  IN_PRODUCTION: "bg-purple-100 text-purple-700",
-  PACKED: "bg-indigo-100 text-indigo-700",
-  SHIPPED: "bg-cyan-100 text-cyan-700",
-  OUT_FOR_DELIVERY: "bg-orange-100 text-orange-700",
-  DELIVERED: "bg-emerald-100 text-emerald-700",
-};
 
 export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageProps) {
   const { status, search } = await searchParams;

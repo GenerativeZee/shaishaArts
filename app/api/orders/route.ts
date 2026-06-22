@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       state,
       pincode,
       paymentMethod,
+      giftMessage,
       items, // [{ productId, qty }]
     } = body;
 
@@ -90,6 +91,7 @@ export async function POST(req: NextRequest) {
           items: JSON.stringify(orderItemsToSave),
           totalAmount: computedTotal,
           paymentMethod,
+          giftMessage: giftMessage || null,
           status: "RECEIVED",
         },
       });

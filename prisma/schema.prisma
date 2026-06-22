@@ -52,6 +52,7 @@ model Order {
   totalAmount       Int
   paymentMethod     String              @default("QR") // QR | WHATSAPP
   paymentScreenshot String?             // Cloudinary URL
+  giftMessage       String?
   status            String              @default("RECEIVED")
   history           OrderStatusHistory[]
   createdAt         DateTime            @default(now())

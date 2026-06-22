@@ -5,22 +5,12 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import StatusTimeline from "@/components/store/StatusTimeline";
 import OrderStatusUpdater from "@/components/admin/OrderStatusUpdater";
 import { prisma } from "@/lib/prisma";
+import { STATUS_COLORS } from "@/lib/constants";
 import { ArrowLeft } from "lucide-react";
 
 interface AdminOrderDetailProps {
   params: Promise<{ id: string }>;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-  RECEIVED: "bg-gray-100 text-gray-700",
-  PAYMENT_VERIFICATION: "bg-amber-100 text-amber-700",
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  IN_PRODUCTION: "bg-purple-100 text-purple-700",
-  PACKED: "bg-indigo-100 text-indigo-700",
-  SHIPPED: "bg-cyan-100 text-cyan-700",
-  OUT_FOR_DELIVERY: "bg-orange-100 text-orange-700",
-  DELIVERED: "bg-emerald-100 text-emerald-700",
-};
 
 export default async function AdminOrderDetailPage({ params }: AdminOrderDetailProps) {
   const { id } = await params;
@@ -118,6 +108,17 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 <span>₹{order.totalAmount}</span>
               </div>
             </div>
+
+            {/* Gift Message */}
+            {(order as { giftMessage?: string | null }).giftMessage && (
+              <div className="bg-rose-50 rounded-2xl border border-rose-200 shadow-sm p-6">
+                <h2 className="font-bold text-rose-700 mb-2 flex items-center gap-2">🎁 Gift Message</h2>
+                <p className="text-gray-700 text-sm italic leading-relaxed">
+                  &ldquo;{(order as { giftMessage?: string | null }).giftMessage}&rdquo;
+                </p>
+                <p className="text-xs text-rose-400 mt-2">Include a handwritten card with this order.</p>
+              </div>
+            )}
 
             {/* Payment Screenshot */}
             {order.paymentScreenshot && (

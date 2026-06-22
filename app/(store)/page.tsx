@@ -2,39 +2,20 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, ShoppingCart, MessageCircle, Heart, Award, Gift, Truck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import ProductCard from "@/components/store/ProductCard";
 
-type ProductWithCategory = Prisma.ProductGetPayload<{
-  include: { category: { select: { name: true; slug: true } } };
-}>;
+const productInclude = {
+  include: { category: { select: { name: true, slug: true } } },
+} as const;
 
 export default async function HomePage() {
-  let featuredProducts: ProductWithCategory[] = [];
-  let bestSellers: ProductWithCategory[] = [];
-  try {
-    featuredProducts = await prisma.product.findMany({
-      where: { isFeatured: true, isActive: true },
-      include: {
-        category: {
-          select: { name: true, slug: true },
-        },
-      },
-      take: 4,
-    });
+  const [featuredRes, bestsellersRes] = await Promise.allSettled([
+    prisma.product.findMany({ where: { isFeatured: true, isActive: true }, ...productInclude, take: 4 }),
+    prisma.product.findMany({ where: { isBestseller: true, isActive: true }, ...productInclude, take: 4 }),
+  ]);
 
-    bestSellers = await prisma.product.findMany({
-      where: { isBestseller: true, isActive: true },
-      include: {
-        category: {
-          select: { name: true, slug: true },
-        },
-      },
-      take: 4,
-    });
-  } catch (error) {
-    console.error("Home page DB fetch error:", error);
-  }
+  const featuredProducts = featuredRes.status === "fulfilled" ? featuredRes.value : [];
+  const bestSellers = bestsellersRes.status === "fulfilled" ? bestsellersRes.value : [];
 
   const collections = [
     { name: "Phone Charms", slug: "charms", image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500" },

@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     // Process and validate items + calculate total amount from DB prices
     let computedTotal = 0;
-    const orderItemsToSave = [];
+    const orderItemsToSave: { productId: string; name: string; qty: number; price: number; image: string; slug: string }[] = [];
 
     for (const item of items) {
       const product = await prisma.product.findUnique({
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       // Get primary image
       let primaryImage = "";
       try {
-        const parsed = JSON.parse(product.images);
+        const parsed: string[] = JSON.parse(product.images);
         primaryImage = parsed[0] || "";
       } catch {
         // empty

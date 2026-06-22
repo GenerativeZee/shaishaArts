@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import ProductCard from "@/components/store/ProductCard";
 import ShopFilters from "@/components/store/ShopFilters";
 
@@ -14,7 +15,7 @@ interface ShopPageProps {
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const { category, sort, search } = await searchParams;
 
-  const whereClause: Record<string, unknown> = { isActive: true };
+  const whereClause: Prisma.ProductWhereInput = { isActive: true };
 
   if (search) {
     whereClause.OR = [
@@ -34,7 +35,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
   }
 
-  let orderBy: Record<string, string> = { createdAt: "desc" };
+  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" };
   if (sort === "price_asc") orderBy = { price: "asc" };
   if (sort === "price_desc") orderBy = { price: "desc" };
 

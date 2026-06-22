@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Parse items JSON
-    let parsedItems = [];
+    let parsedItems: { name: string; qty: number; price: number; image?: string }[] = [];
     try {
       parsedItems = JSON.parse(order.items);
     } catch {

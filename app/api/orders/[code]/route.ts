@@ -23,7 +23,7 @@ export async function GET(
     }
 
     // Parse items JSON safely
-    let parsedItems = [];
+    let parsedItems: { name: string; qty: number; price: number; image?: string }[] = [];
     try {
       parsedItems = JSON.parse(order.items);
     } catch {

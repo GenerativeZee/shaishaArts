@@ -6,8 +6,9 @@ import ProductCard from "@/components/store/ProductCard";
 
 export default async function HomePage() {
   // Fetch featured and bestseller products from database
-  let featuredProducts = [];
-  let bestSellers = [];
+  type ProductWithCategory = Awaited<ReturnType<typeof prisma.product.findMany>>;
+  let featuredProducts: ProductWithCategory = [];
+  let bestSellers: ProductWithCategory = [];
   try {
     featuredProducts = await prisma.product.findMany({
       where: { isFeatured: true, isActive: true },

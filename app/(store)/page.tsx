@@ -2,13 +2,16 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, ShoppingCart, MessageCircle, Heart, Award, Gift, Truck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import ProductCard from "@/components/store/ProductCard";
 
+type ProductWithCategory = Prisma.ProductGetPayload<{
+  include: { category: { select: { name: true; slug: true } } };
+}>;
+
 export default async function HomePage() {
-  // Fetch featured and bestseller products from database
-  type ProductWithCategory = Awaited<ReturnType<typeof prisma.product.findMany>>;
-  let featuredProducts: ProductWithCategory = [];
-  let bestSellers: ProductWithCategory = [];
+  let featuredProducts: ProductWithCategory[] = [];
+  let bestSellers: ProductWithCategory[] = [];
   try {
     featuredProducts = await prisma.product.findMany({
       where: { isFeatured: true, isActive: true },

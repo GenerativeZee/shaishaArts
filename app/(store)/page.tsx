@@ -5,8 +5,19 @@ import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/store/ProductCard";
 
 const productInclude = {
-  include: { category: { select: { name: true, slug: true } } },
+  include: {
+    category: { select: { name: true, slug: true } },
+    reviews: { where: { isApproved: true }, select: { rating: true } },
+  },
 } as const;
+
+function withReviewStats<T extends { reviews: { rating: number }[] }>(products: T[]) {
+  return products.map((p) => ({
+    ...p,
+    avgRating: p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0,
+    reviewCount: p.reviews.length,
+  }));
+}
 
 export default async function HomePage() {
   const [featuredRes, bestsellersRes] = await Promise.allSettled([
@@ -14,8 +25,8 @@ export default async function HomePage() {
     prisma.product.findMany({ where: { isBestseller: true, isActive: true }, ...productInclude, take: 4 }),
   ]);
 
-  const featuredProducts = featuredRes.status === "fulfilled" ? featuredRes.value : [];
-  const bestSellers = bestsellersRes.status === "fulfilled" ? bestsellersRes.value : [];
+  const featuredProducts = withReviewStats(featuredRes.status === "fulfilled" ? featuredRes.value : []);
+  const bestSellers = withReviewStats(bestsellersRes.status === "fulfilled" ? bestsellersRes.value : []);
 
   const collections = [
     { name: "Phone Charms", slug: "charms", image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500" },

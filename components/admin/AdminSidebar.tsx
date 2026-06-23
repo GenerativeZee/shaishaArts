@@ -10,6 +10,7 @@ import {
   Boxes,
   LogOut,
   Store,
+  MessageSquare,
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +18,7 @@ const navItems = [
   { href: "/admin/orders", icon: ShoppingBag, label: "Orders" },
   { href: "/admin/products", icon: Package, label: "Products" },
   { href: "/admin/inventory", icon: Boxes, label: "Inventory" },
+  { href: "/admin/reviews", icon: MessageSquare, label: "Reviews" },
 ];
 
 export default function AdminSidebar() {

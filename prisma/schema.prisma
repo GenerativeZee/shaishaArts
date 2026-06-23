@@ -36,6 +36,7 @@ model Product {
   isBestseller     Boolean @default(false)
   isActive         Boolean @default(true)
   createdAt        DateTime @default(now())
+  reviews          Review[]
 }
 
 model Order {
@@ -82,4 +83,15 @@ model Inquiry {
   email     String?
   message   String
   createdAt DateTime @default(now())
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id])
+  customerName String
+  rating       Int
+  comment      String
+  isApproved   Boolean  @default(false)
+  createdAt    DateTime @default(now())
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ShoppingCart, Eye, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
+import StarRating from "./StarRating";
 
 interface ProductCardProps {
   product: {
@@ -17,6 +18,8 @@ interface ProductCardProps {
     isBestseller: boolean;
     isFeatured: boolean;
     description?: string;
+    avgRating?: number;
+    reviewCount?: number;
     category: {
       name: string;
       slug: string;
@@ -142,11 +145,18 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.category.name}
         </Link>
 
-        <Link href={`/product/${product.slug}`} className="block mb-2">
+        <Link href={`/product/${product.slug}`} className="block mb-1.5">
           <h3 className="font-serif text-base font-bold text-gray-800 line-clamp-1 group-hover:text-[#8B1A4A] transition-colors">
             {product.name}
           </h3>
         </Link>
+
+        {product.avgRating && product.avgRating > 0 ? (
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <StarRating rating={Math.round(product.avgRating)} size="sm" />
+            <span className="text-[11px] text-gray-400 font-medium">({product.reviewCount})</span>
+          </div>
+        ) : null}
 
         {product.description && (
           <p className="text-gray-400 text-xs font-medium line-clamp-2 mb-3 flex-grow leading-relaxed">

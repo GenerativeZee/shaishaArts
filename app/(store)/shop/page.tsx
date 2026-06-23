@@ -39,14 +39,23 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   if (sort === "price_asc") orderBy = { price: "asc" };
   if (sort === "price_desc") orderBy = { price: "desc" };
 
-  const [products, categories] = await Promise.all([
+  const [rawProducts, categories] = await Promise.all([
     prisma.product.findMany({
       where: whereClause,
-      include: { category: { select: { name: true, slug: true } } },
+      include: {
+        category: { select: { name: true, slug: true } },
+        reviews: { where: { isApproved: true }, select: { rating: true } },
+      },
       orderBy,
     }),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
   ]);
+
+  const products = rawProducts.map((p) => ({
+    ...p,
+    avgRating: p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0,
+    reviewCount: p.reviews.length,
+  }));
 
   return (
     <div className="w-full bg-[#FFF5F8]">

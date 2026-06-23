@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,8 +27,10 @@ export default function RootLayout({
     <html lang="en" className="h-full scroll-smooth">
       <body className="min-h-full bg-background font-sans antialiased text-foreground flex flex-col">
         <CartProvider>
-          {children}
-          <Toaster position="top-center" richColors />
+          <WishlistProvider>
+            {children}
+            <Toaster position="top-center" richColors />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Menu, X, ChevronDown, Instagram, Phone } from "lucide-react";
+import { ShoppingBag, Menu, X, ChevronDown, Instagram, Phone, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
 export default function Header() {
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -125,6 +127,20 @@ export default function Header() {
             <Phone className="w-5 h-5" />
           </a>
 
+          {/* Wishlist Icon */}
+          <Link
+            href="/wishlist"
+            className="relative p-2.5 text-[#8B1A4A] hover:bg-rose-50 rounded-full transition-colors group"
+            title="Wishlist"
+          >
+            <Heart className="w-5 h-5 group-hover:scale-105 transition-transform" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+
           {/* Cart Icon */}
           <Link
             href="/cart"
@@ -163,6 +179,21 @@ export default function Header() {
                       {link.name}
                     </Link>
                   ))}
+                  <Link
+                    href="/wishlist"
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-2 text-base font-semibold py-1.5 transition-colors hover:text-[#8B1A4A] ${
+                      pathname === "/wishlist" ? "text-[#8B1A4A]" : "text-gray-700"
+                    }`}
+                  >
+                    <Heart className="w-4 h-4" />
+                    Wishlist
+                    {wishlistCount > 0 && (
+                      <span className="ml-1 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                        {wishlistCount}
+                      </span>
+                    )}
+                  </Link>
                 </div>
 
                 <div className="flex flex-col gap-3 border-t border-rose-100 pt-4">

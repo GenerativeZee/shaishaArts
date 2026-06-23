@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ShoppingCart, Eye, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
 import StarRating from "./StarRating";
 
@@ -29,8 +30,9 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
-  const [wished, setWished] = useState(false);
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [adding, setAdding] = useState(false);
+  const wished = isWishlisted(product.id);
 
   let imagesList: string[] = [];
   try {
@@ -66,8 +68,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   const toggleWish = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setWished((w) => !w);
+    toggleWishlist(product.id);
     if (!wished) toast.success("Added to wishlist 💕");
+    else toast("Removed from wishlist");
   };
 
   return (

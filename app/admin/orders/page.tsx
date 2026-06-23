@@ -3,6 +3,8 @@ import Link from "next/link";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { prisma } from "@/lib/prisma";
 import { ORDER_STATUSES, STATUS_COLORS } from "@/lib/constants";
+
+export const dynamic = "force-dynamic";
 import { Eye } from "lucide-react";
 
 interface AdminOrdersPageProps {

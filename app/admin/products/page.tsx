@@ -5,6 +5,8 @@ import DeleteProductButton from "@/components/admin/DeleteProductButton";
 import { prisma } from "@/lib/prisma";
 import { Plus, Edit } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProductsPage() {
   const products = await prisma.product.findMany({
     include: { category: { select: { name: true } } },

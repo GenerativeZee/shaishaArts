@@ -3,6 +3,8 @@ import Link from "next/link";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { prisma } from "@/lib/prisma";
 import { ShoppingBag, Clock, CheckCircle, IndianRupee, ArrowRight } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 import { STATUS_COLORS } from "@/lib/constants";
 
 const CONFIRMED_STATUSES = [

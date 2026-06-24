@@ -9,18 +9,23 @@ interface ShopPageProps {
     category?: string;
     sort?: string;
     search?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    minRating?: string;
   }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function ShopPage({ searchParams }: ShopPageProps) {
-  const { category, sort, search } = await searchParams;
+  const { category, sort, search, minPrice, maxPrice, minRating } = await searchParams;
 
   const whereClause: Prisma.ProductWhereInput = { isActive: true };
 
   if (search) {
     whereClause.OR = [
-      { name: { contains: search } },
-      { description: { contains: search } },
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
     ];
   }
 
@@ -35,6 +40,13 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
   }
 
+  if (minPrice || maxPrice) {
+    whereClause.price = {
+      ...(minPrice ? { gte: Number(minPrice) } : {}),
+      ...(maxPrice ? { lte: Number(maxPrice) } : {}),
+    };
+  }
+
   let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" };
   if (sort === "price_asc") orderBy = { price: "asc" };
   if (sort === "price_desc") orderBy = { price: "desc" };
@@ -46,16 +58,24 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         category: { select: { name: true, slug: true } },
         reviews: { where: { isApproved: true }, select: { rating: true } },
       },
-      orderBy,
+      orderBy: sort === "rating_desc" ? { createdAt: "desc" } : orderBy,
     }),
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.category.findMany({ where: { parentId: null }, orderBy: { name: "asc" } }),
   ]);
 
-  const products = rawProducts.map((p) => ({
+  let products = rawProducts.map((p) => ({
     ...p,
     avgRating: p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0,
     reviewCount: p.reviews.length,
   }));
+
+  if (minRating) {
+    products = products.filter((p) => p.avgRating >= Number(minRating));
+  }
+
+  if (sort === "rating_desc") {
+    products.sort((a, b) => b.avgRating - a.avgRating);
+  }
 
   return (
     <div className="w-full bg-[#FFF5F8]">

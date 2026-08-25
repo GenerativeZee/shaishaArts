@@ -37,6 +37,9 @@ export default async function HomePage() {
     { name: "Stationery", slug: "stationery", image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=500" },
     { name: "Jewelry", slug: "jewelry", image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500" },
     { name: "Hampers", slug: "hampers", image: "https://images.unsplash.com/photo-1549465220-1a8b9238f519?w=500" },
+    { name: "Candles", slug: "candles", image: "https://images.unsplash.com/photo-1602874801007-bd36c0fdf344?w=500" },
+    { name: "Wishing Cards", slug: "wishing-cards", image: "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=500" },
+    { name: "Custom Packaging", slug: "custom-packaging", image: "https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=500" },
   ];
 
   return (

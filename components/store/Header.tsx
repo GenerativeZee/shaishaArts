@@ -22,6 +22,9 @@ export default function Header() {
     { name: "Accessories", slug: "accessories" },
     { name: "Stationery", slug: "stationery" },
     { name: "Gift Hampers", slug: "hampers" },
+    { name: "Candles", slug: "candles" },
+    { name: "Wishing Cards", slug: "wishing-cards" },
+    { name: "Custom Packaging", slug: "custom-packaging" },
   ];
 
   const navLinks = [

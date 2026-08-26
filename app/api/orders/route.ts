@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateOrderCode } from "@/lib/orderCode";
+import { computeDiscount, couponMatches } from "@/lib/coupon";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,6 +17,7 @@ export async function POST(req: NextRequest) {
       paymentMethod,
       giftMessage,
       items, // [{ productId, qty }]
+      couponCode,
     } = body;
 
     // Validation
@@ -73,6 +75,19 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Validate coupon and compute discount server-side (never trust client-sent amounts)
+    let discountAmount = 0;
+    let appliedCouponCode: string | null = null;
+    if (couponCode) {
+      const offer = await prisma.offer.findFirst();
+      if (!couponMatches(offer, couponCode)) {
+        return NextResponse.json({ error: "Invalid or expired coupon code." }, { status: 400 });
+      }
+      discountAmount = computeDiscount(offer!, computedTotal);
+      appliedCouponCode = offer!.code;
+    }
+    const finalTotal = computedTotal - discountAmount;
+
     // Generate SA#### code
     const orderCode = await generateOrderCode();
 
@@ -89,7 +104,9 @@ export async function POST(req: NextRequest) {
           state,
           pincode,
           items: JSON.stringify(orderItemsToSave),
-          totalAmount: computedTotal,
+          totalAmount: finalTotal,
+          couponCode: appliedCouponCode,
+          discountAmount,
           paymentMethod,
           giftMessage: giftMessage || null,
           status: "RECEIVED",

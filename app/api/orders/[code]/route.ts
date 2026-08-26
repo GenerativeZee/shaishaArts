@@ -36,6 +36,8 @@ export async function GET(
       customerName: order.customerName,
       items: parsedItems,
       totalAmount: order.totalAmount,
+      couponCode: order.couponCode,
+      discountAmount: order.discountAmount,
       paymentMethod: order.paymentMethod,
       paymentScreenshot: order.paymentScreenshot,
       giftMessage: order.giftMessage,

@@ -50,7 +50,9 @@ model Order {
   state             String
   pincode           String
   items             String              // JSON [{productId,name,qty,price}]
-  totalAmount       Int
+  totalAmount       Int                 // final payable amount, after discount
+  couponCode        String?
+  discountAmount    Int                 @default(0)
   paymentMethod     String              @default("QR") // QR | WHATSAPP
   paymentScreenshot String?             // Cloudinary URL
   giftMessage       String?
@@ -73,6 +75,27 @@ model AdminUser {
   email        String @unique
   passwordHash String
   role         String @default("admin")
+}
+
+model Offer {
+  id            String   @id @default(cuid())
+  active        Boolean  @default(true)
+  emoji         String   @default("🎁")
+  title         String
+  message       String
+  code          String?
+  discountType  String   @default("PERCENT") // PERCENT | FLAT
+  discountValue Int      @default(0)
+  ctaText       String   @default("Shop the Offer")
+  ctaHref       String   @default("/shop")
+  updatedAt     DateTime @updatedAt
+}
+
+model HeroImage {
+  id        String   @id @default(cuid())
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
 }
 
 model Inquiry {

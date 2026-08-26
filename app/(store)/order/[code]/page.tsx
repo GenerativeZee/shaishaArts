@@ -19,6 +19,8 @@ interface OrderItem {
 interface OrderData {
   code: string;
   totalAmount: number;
+  couponCode?: string | null;
+  discountAmount?: number;
   status: string;
   paymentMethod: string;
   paymentScreenshot?: string;
@@ -143,6 +145,18 @@ export default function OrderConfirmationPage() {
               </div>
             ))}
           </div>
+          {(order.discountAmount ?? 0) > 0 && (
+            <div className="space-y-1.5 mb-3 text-sm">
+              <div className="flex justify-between text-gray-500">
+                <span>Subtotal</span>
+                <span>₹{order.totalAmount + (order.discountAmount ?? 0)}</span>
+              </div>
+              <div className="flex justify-between text-emerald-600 font-semibold">
+                <span>Discount {order.couponCode ? `(${order.couponCode})` : ""}</span>
+                <span>−₹{order.discountAmount}</span>
+              </div>
+            </div>
+          )}
           <div className="flex justify-between font-bold text-gray-900 text-lg">
             <span>Total to Pay</span>
             <span className="text-[#8B1A4A]">₹{order.totalAmount}</span>

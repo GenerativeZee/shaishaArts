@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, ChevronDown, Instagram, Phone, Heart } from "lucide-react";
@@ -8,11 +8,35 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
-export default function Header() {
+interface OfferData {
+  active: boolean;
+  emoji: string;
+  title: string;
+  message: string;
+  code: string | null;
+}
+
+const WELCOME_MESSAGE = "🌸 Welcome to Shaisha Arts - Handcrafted with love, just for you!";
+
+export default function Header({ offer }: { offer?: OfferData | null }) {
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [announceIdx, setAnnounceIdx] = useState(0);
+
+  const announcements = offer?.active
+    ? [
+        WELCOME_MESSAGE,
+        `${offer.emoji} ${offer.title}: ${offer.message}${offer.code ? ` — Use code ${offer.code}` : ""}`,
+      ]
+    : [WELCOME_MESSAGE];
+
+  useEffect(() => {
+    if (announcements.length < 2) return;
+    const id = setInterval(() => setAnnounceIdx((i) => (i + 1) % announcements.length), 4000);
+    return () => clearInterval(id);
+  }, [announcements.length]);
 
   const categories = [
     { name: "Anti-Tarnish Jewelry", slug: "anti-tarnish" },
@@ -40,8 +64,8 @@ export default function Header() {
     <header className="sticky top-0 z-40 w-full bg-white shadow-sm border-b border-rose-100">
       {/* Top Announcement Bar */}
       <div className="w-full bg-[#8B1A4A] text-white text-xs py-2 px-4 flex flex-col sm:flex-row justify-between items-center gap-1 font-medium select-none">
-        <div className="flex items-center gap-1.5 animate-pulse">
-          <span>🌸</span> Welcome to Shaisha Arts - Handcrafted with love, just for you!
+        <div className="flex items-center gap-1.5 text-center">
+          {announcements[announceIdx % announcements.length]}
         </div>
         <div className="flex items-center gap-3">
           <span>🇮🇳 Pan India Shipping</span>

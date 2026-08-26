@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import AdminSidebar from "@/components/admin/AdminSidebar";
 import { prisma } from "@/lib/prisma";
 import { ORDER_STATUSES, STATUS_COLORS } from "@/lib/constants";
 
@@ -30,15 +29,13 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
   });
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-            <p className="text-gray-500 text-sm mt-1">{orders.length} orders found</p>
-          </div>
+    <>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
+          <p className="text-gray-500 text-sm mt-1">{orders.length} orders found</p>
         </div>
+      </div>
 
         {/* Filters */}
         <form method="GET" className="flex flex-wrap gap-3 mb-6">
@@ -131,7 +128,6 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
             </table>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

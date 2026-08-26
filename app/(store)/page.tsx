@@ -19,14 +19,29 @@ function withReviewStats<T extends { reviews: { rating: number }[] }>(products: 
   }));
 }
 
+const FALLBACK_HERO_IMAGES = [
+  { url: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500", alt: "Handmade Macrame Decor" },
+  { url: "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?w=500", alt: "Scrunchies Accessories" },
+  { url: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500", alt: "Premium Anti-Tarnish Jewelry" },
+  { url: "https://images.unsplash.com/photo-1549465220-1a8b9238f519?w=500", alt: "Custom Hampers Box" },
+];
+
 export default async function HomePage() {
-  const [featuredRes, bestsellersRes] = await Promise.allSettled([
+  const [featuredRes, bestsellersRes, heroImagesRes, offerRes] = await Promise.allSettled([
     prisma.product.findMany({ where: { isFeatured: true, isActive: true }, ...productInclude, take: 4 }),
     prisma.product.findMany({ where: { isBestseller: true, isActive: true }, ...productInclude, take: 4 }),
+    prisma.heroImage.findMany({ orderBy: { order: "asc" }, take: 4 }),
+    prisma.offer.findFirst(),
   ]);
 
   const featuredProducts = withReviewStats(featuredRes.status === "fulfilled" ? featuredRes.value : []);
   const bestSellers = withReviewStats(bestsellersRes.status === "fulfilled" ? bestsellersRes.value : []);
+  const customHeroImages = heroImagesRes.status === "fulfilled" ? heroImagesRes.value : [];
+  const offer = offerRes.status === "fulfilled" ? offerRes.value : null;
+  const heroImages = FALLBACK_HERO_IMAGES.map((fallback, idx) => ({
+    url: customHeroImages[idx]?.url || fallback.url,
+    alt: fallback.alt,
+  }));
 
   const collections = [
     { name: "Phone Charms", slug: "charms", image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=500" },
@@ -92,29 +107,29 @@ export default async function HomePage() {
             <div className="grid grid-cols-12 gap-4 w-full max-w-[500px]">
               <div className="col-span-8 overflow-hidden rounded-2xl border-4 border-white shadow-xl rotate-[-2deg] hover:rotate-0 transition-transform duration-300 aspect-[4/3] bg-rose-50">
                 <img
-                  src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500"
-                  alt="Handmade Macrame Decor"
+                  src={heroImages[0].url}
+                  alt={heroImages[0].alt}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="col-span-4 overflow-hidden rounded-2xl border-4 border-white shadow-xl rotate-[4deg] hover:rotate-0 transition-transform duration-300 aspect-square mt-6 bg-rose-50">
                 <img
-                  src="https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?w=500"
-                  alt="Scrunchies Accessories"
+                  src={heroImages[1].url}
+                  alt={heroImages[1].alt}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="col-span-4 overflow-hidden rounded-2xl border-4 border-white shadow-xl rotate-[-4deg] hover:rotate-0 transition-transform duration-300 aspect-square bg-rose-50">
                 <img
-                  src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500"
-                  alt="Premium Anti-Tarnish Jewelry"
+                  src={heroImages[2].url}
+                  alt={heroImages[2].alt}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="col-span-8 overflow-hidden rounded-2xl border-4 border-white shadow-xl rotate-[2deg] hover:rotate-0 transition-transform duration-300 aspect-[4/3] bg-rose-50">
                 <img
-                  src="https://images.unsplash.com/photo-1549465220-1a8b9238f519?w=500"
-                  alt="Custom Hampers Box"
+                  src={heroImages[3].url}
+                  alt={heroImages[3].alt}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -122,6 +137,37 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 1.5 OFFER BANNER */}
+      {offer?.active && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 mb-4">
+          <Link
+            href={offer.ctaHref}
+            className="group flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-100 via-rose-50 to-white px-6 sm:px-10 py-6 shadow-sm hover:shadow-md transition-all"
+          >
+            <div className="flex items-center gap-4 text-center sm:text-left">
+              <span className="text-4xl">{offer.emoji}</span>
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#8B1A4A]">
+                  {offer.title}
+                </h3>
+                <p className="text-gray-600 text-sm sm:text-base font-medium">
+                  {offer.message}
+                  {offer.code && (
+                    <>
+                      {" "}— Use code{" "}
+                      <span className="font-bold text-[#8B1A4A]">{offer.code}</span>
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+            <span className="shrink-0 inline-flex items-center gap-2 bg-[#8B1A4A] group-hover:bg-[#72123b] text-white px-6 py-3 rounded-full font-bold shadow-md transition-all">
+              {offer.ctaText} <ArrowRight className="w-4 h-4" />
+            </span>
+          </Link>
+        </section>
+      )}
 
       {/* 2. OUR COLLECTION CATEGORIES */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

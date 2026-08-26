@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import AdminSidebar from "@/components/admin/AdminSidebar";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
 import { prisma } from "@/lib/prisma";
 import { Plus, Edit } from "lucide-react";
@@ -14,21 +13,19 @@ export default async function AdminProductsPage() {
   });
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-            <p className="text-gray-500 text-sm mt-1">{products.length} total products</p>
-          </div>
-          <Link
-            href="/admin/products/new"
-            className="bg-[#8B1A4A] hover:bg-[#72123b] text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
-          >
-            <Plus className="w-4 h-4" /> Add Product
-          </Link>
+    <>
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Products</h1>
+          <p className="text-gray-500 text-sm mt-1">{products.length} total products</p>
         </div>
+        <Link
+          href="/admin/products/new"
+          className="bg-[#8B1A4A] hover:bg-[#72123b] text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors shadow-sm"
+        >
+          <Plus className="w-4 h-4" /> Add Product
+        </Link>
+      </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -108,7 +105,6 @@ export default async function AdminProductsPage() {
             </table>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

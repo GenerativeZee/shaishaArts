@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import AdminSidebar from "@/components/admin/AdminSidebar";
 import { prisma } from "@/lib/prisma";
 import { ShoppingBag, Clock, CheckCircle, IndianRupee, ArrowRight } from "lucide-react";
 
@@ -35,13 +34,11 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">Welcome back! Here&apos;s what&apos;s happening.</p>
-        </div>
+    <>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-500 text-sm mt-1">Welcome back! Here&apos;s what&apos;s happening.</p>
+      </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -109,7 +106,6 @@ export default async function AdminDashboard() {
             </table>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

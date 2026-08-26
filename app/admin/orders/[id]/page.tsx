@@ -1,7 +1,6 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import AdminSidebar from "@/components/admin/AdminSidebar";
 import StatusTimeline from "@/components/store/StatusTimeline";
 import OrderStatusUpdater from "@/components/admin/OrderStatusUpdater";
 import { prisma } from "@/lib/prisma";
@@ -30,28 +29,26 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="mb-6">
-          <Link
-            href="/admin/orders"
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#8B1A4A] mb-4 w-fit"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to Orders
-          </Link>
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Order #{order.code}</h1>
-              <p className="text-gray-500 text-sm mt-0.5">
-                {new Date(order.createdAt).toLocaleString("en-IN")}
-              </p>
-            </div>
-            <span className={`px-3 py-1.5 rounded-full text-sm font-bold ${STATUS_COLORS[order.status] || "bg-gray-100"}`}>
-              {order.status.replace(/_/g, " ")}
-            </span>
+    <>
+      <div className="mb-6">
+        <Link
+          href="/admin/orders"
+          className="flex items-center gap-1 text-sm text-gray-500 hover:text-[#8B1A4A] mb-4 w-fit"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Orders
+        </Link>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Order #{order.code}</h1>
+            <p className="text-gray-500 text-sm mt-0.5">
+              {new Date(order.createdAt).toLocaleString("en-IN")}
+            </p>
           </div>
+          <span className={`px-3 py-1.5 rounded-full text-sm font-bold ${STATUS_COLORS[order.status] || "bg-gray-100"}`}>
+            {order.status.replace(/_/g, " ")}
+          </span>
         </div>
+      </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left column */}
@@ -103,9 +100,23 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                   </div>
                 ))}
               </div>
-              <div className="border-t border-gray-100 mt-4 pt-4 flex justify-between font-bold text-gray-900">
-                <span>Total</span>
-                <span>₹{order.totalAmount}</span>
+              <div className="border-t border-gray-100 mt-4 pt-4 space-y-1.5">
+                {order.discountAmount > 0 && (
+                  <>
+                    <div className="flex justify-between text-sm text-gray-500">
+                      <span>Subtotal</span>
+                      <span>₹{order.totalAmount + order.discountAmount}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-emerald-600 font-semibold">
+                      <span>Discount {order.couponCode ? `(${order.couponCode})` : ""}</span>
+                      <span>−₹{order.discountAmount}</span>
+                    </div>
+                  </>
+                )}
+                <div className="flex justify-between font-bold text-gray-900">
+                  <span>Total</span>
+                  <span>₹{order.totalAmount}</span>
+                </div>
               </div>
             </div>
 
@@ -151,7 +162,6 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

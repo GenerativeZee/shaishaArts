@@ -7,6 +7,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const orderCode = formData.get("orderCode") as string | null;
+    const folder = (formData.get("folder") as string | null) || "shaisha_payment_proofs";
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const url = await uploadImage(buffer, "shaisha_payment_proofs");
+    const url = await uploadImage(buffer, folder);
 
     // Attach screenshot to order and move to PAYMENT_VERIFICATION
     if (orderCode) {

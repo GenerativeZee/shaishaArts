@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
-import { ArrowLeft, ShoppingBag, CheckCircle2, XCircle, Gift } from "lucide-react";
+import { ArrowLeft, ShoppingBag, CheckCircle2, XCircle, Gift, Tag, Loader2 } from "lucide-react";
 
 const INDIAN_STATES = [
   "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat",
@@ -33,6 +33,10 @@ export default function CheckoutPage() {
   const { items, cartTotal, clearCart, isLoaded } = useCart();
   const [loading, setLoading] = useState(false);
   const [touched, setTouch] = useState<Record<string, boolean>>({});
+  const [couponInput, setCouponInput] = useState("");
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; title: string; discountAmount: number } | null>(null);
   const [form, setForm] = useState({
     customerName: "",
     phone: "",
@@ -54,6 +58,40 @@ export default function CheckoutPage() {
     setTouch((p) => ({ ...p, [name]: true }));
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setApplyingCoupon(true);
+    setCouponError("");
+    try {
+      const res = await fetch("/api/coupon/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponInput.trim(), subtotal: cartTotal }),
+      });
+      const data = await res.json();
+      if (!data.valid) {
+        setCouponError(data.message || "Invalid coupon code.");
+        setAppliedCoupon(null);
+        return;
+      }
+      setAppliedCoupon({ code: data.code, title: data.title, discountAmount: data.discountAmount });
+      toast.success(data.message);
+    } catch {
+      setCouponError("Failed to apply coupon. Please try again.");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponError("");
+  };
+
+  const discountAmount = appliedCoupon?.discountAmount || 0;
+  const finalTotal = cartTotal - discountAmount;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) { toast.error("Your cart is empty."); return; }
@@ -68,6 +106,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           ...form,
           items: items.map((i) => ({ productId: i.productId, qty: i.qty })),
+          couponCode: appliedCoupon?.code || undefined,
         }),
       });
       const data = await res.json();
@@ -272,10 +311,54 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
+                {/* Coupon */}
+                <div className="mb-4 border-b border-rose-50 pb-4">
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2.5">
+                      <div className="flex items-center gap-2 text-emerald-700 text-xs font-bold">
+                        <Tag className="w-3.5 h-3.5" />
+                        {appliedCoupon.code} applied — save ₹{appliedCoupon.discountAmount}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        className="text-emerald-600 hover:text-emerald-800 text-xs font-bold underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex gap-2">
+                        <input
+                          value={couponInput}
+                          onChange={(e) => { setCouponInput(e.target.value); setCouponError(""); }}
+                          placeholder="Coupon code"
+                          className={`${inp} border-rose-100 flex-1 font-mono text-xs`}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          disabled={applyingCoupon || !couponInput.trim()}
+                          className="shrink-0 px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold disabled:opacity-50 flex items-center gap-1.5"
+                        >
+                          {applyingCoupon ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Apply"}
+                        </button>
+                      </div>
+                      {couponError && <p className="text-rose-500 text-xs mt-1.5">{couponError}</p>}
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-2 text-sm mb-4 border-b border-rose-50 pb-4">
                   <div className="flex justify-between text-gray-500">
                     <span>Subtotal</span><span className="font-semibold text-gray-700">₹{cartTotal}</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-600">
+                      <span>Discount</span><span className="font-semibold">−₹{discountAmount}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-gray-500">
                     <span>Shipping</span><span className="text-emerald-600 font-semibold">FREE 🎉</span>
                   </div>
@@ -283,7 +366,7 @@ export default function CheckoutPage() {
 
                 <div className="flex justify-between font-bold text-gray-900 text-lg mb-5">
                   <span>Total</span>
-                  <span className="text-[#8B1A4A]">₹{cartTotal}</span>
+                  <span className="text-[#8B1A4A]">₹{finalTotal}</span>
                 </div>
 
                 <Button

@@ -87,7 +87,8 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      fd.append("folder", "shaishaarts/products");
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
       if (!res.ok) throw new Error();
       const { url } = await res.json();
       setImages((prev) => [...prev, url]);

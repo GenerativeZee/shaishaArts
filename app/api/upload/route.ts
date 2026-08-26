@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const orderCode = formData.get("orderCode") as string | null;
-    const folder = (formData.get("folder") as string | null) || "shaisha_payment_proofs";
+    const phone = formData.get("phone") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -23,13 +23,14 @@ export async function POST(req: NextRequest) {
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const url = await uploadImage(buffer, folder);
+    const url = await uploadImage(buffer, "shaisha_payment_proofs");
 
     // Attach screenshot to order and move to PAYMENT_VERIFICATION
-    if (orderCode) {
+    // Requires the order's phone number to prove ownership (order codes are sequential/guessable)
+    if (orderCode && phone) {
       await prisma.$transaction(async (tx) => {
         const order = await tx.order.findUnique({ where: { code: orderCode } });
-        if (!order) return;
+        if (!order || order.phone !== phone) return;
 
         await tx.order.update({
           where: { code: orderCode },

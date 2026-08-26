@@ -92,7 +92,7 @@ Neon PostgreSQL (Database)
 ## Admin Credentials
 - **URL:** https://shaisha-arts.vercel.app/admin/login
 - **Email:** owner@shaishaarts.com
-- **Password:** ShaishaArts@2024
+- **Password:** stored in your password manager — never commit credentials to this repo (it's public)
 
 ---
 

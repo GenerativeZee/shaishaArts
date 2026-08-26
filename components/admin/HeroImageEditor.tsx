@@ -27,7 +27,7 @@ export default function HeroImageEditor({ images }: { images: HeroImage[] }) {
       const fd = new FormData();
       fd.append("file", file);
       fd.append("folder", "shaishaarts/hero");
-      const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
+      const uploadRes = await fetch("/api/admin/upload", { method: "POST", body: fd });
       if (!uploadRes.ok) throw new Error();
       const { url } = await uploadRes.json();
 

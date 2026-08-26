@@ -7,7 +7,7 @@ import { WA_LINK } from "@/lib/whatsapp";
 
 const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const productInclude = {
   include: {

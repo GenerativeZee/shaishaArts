@@ -33,29 +33,42 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Pincode must be at least 6 digits" }, { status: 400 });
     }
 
+    // Reject malformed/negative/non-integer quantities before touching stock or pricing
+    for (const item of items) {
+      if (!item.productId || !Number.isInteger(item.qty) || item.qty <= 0 || item.qty > 100) {
+        return NextResponse.json({ error: "Invalid item quantity" }, { status: 400 });
+      }
+    }
+
+    // Aggregate duplicate productId entries so stock is checked against the true combined quantity
+    const qtyByProductId = new Map<string, number>();
+    for (const item of items) {
+      qtyByProductId.set(item.productId, (qtyByProductId.get(item.productId) || 0) + item.qty);
+    }
+
     // Process and validate items + calculate total amount from DB prices
     let computedTotal = 0;
     const orderItemsToSave: { productId: string; name: string; qty: number; price: number; image: string; slug: string }[] = [];
 
-    for (const item of items) {
+    for (const [productId, qty] of qtyByProductId) {
       const product = await prisma.product.findUnique({
-        where: { id: item.productId },
+        where: { id: productId },
       });
 
       if (!product) {
-        return NextResponse.json({ error: `Product not found: ${item.productId}` }, { status: 404 });
+        return NextResponse.json({ error: `Product not found: ${productId}` }, { status: 404 });
       }
 
       if (!product.isActive) {
         return NextResponse.json({ error: `Product ${product.name} is no longer active` }, { status: 400 });
       }
 
-      if (product.stock < item.qty) {
+      if (product.stock < qty) {
         return NextResponse.json({ error: `Insufficient stock for ${product.name}. Available: ${product.stock}` }, { status: 400 });
       }
 
-      computedTotal += product.price * item.qty;
-      
+      computedTotal += product.price * qty;
+
       // Get primary image
       let primaryImage = "";
       try {
@@ -68,7 +81,7 @@ export async function POST(req: NextRequest) {
       orderItemsToSave.push({
         productId: product.id,
         name: product.name,
-        qty: item.qty,
+        qty,
         price: product.price,
         image: primaryImage,
         slug: product.slug,

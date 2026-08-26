@@ -112,6 +112,7 @@ export default function CheckoutPage() {
       const data = await res.json();
       if (!res.ok) { toast.error(data.error || "Failed to place order."); return; }
       clearCart();
+      try { sessionStorage.setItem(`order_phone_${data.code}`, form.phone); } catch {}
       router.push(`/order/${data.code}`);
     } catch {
       toast.error("Something went wrong. Please try again.");

@@ -37,24 +37,64 @@ export default function OrderConfirmationPage() {
   const [msgCopied, setMsgCopied] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string | null>(null);
+  const [needsPhone, setNeedsPhone] = useState(false);
+  const [phoneInput, setPhoneInput] = useState("");
+  const [verifying, setVerifying] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!code) return;
-    fetch(`/api/orders/${code}`)
-      .then((r) => r.json())
+  const fetchOrder = (verifiedPhone: string) => {
+    setLoading(true);
+    fetch(`/api/orders/${code}?phone=${encodeURIComponent(verifiedPhone)}`)
+      .then((r) => {
+        if (!r.ok) throw new Error();
+        return r.json();
+      })
       .then((data) => {
         let items = data.items;
         if (typeof items === "string") {
           try { items = JSON.parse(items); } catch { items = []; }
         }
         setOrder({ ...data, items });
+        setPhone(verifiedPhone);
+        setNeedsPhone(false);
         if (data.paymentMethod === "WHATSAPP") setTab("whatsapp");
         if (data.paymentScreenshot) setScreenshotUrl(data.paymentScreenshot);
+        try { sessionStorage.setItem(`order_phone_${code}`, verifiedPhone); } catch {}
       })
-      .catch(() => toast.error("Failed to load order details."))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        setOrder(null);
+        setNeedsPhone(true);
+        try { sessionStorage.removeItem(`order_phone_${code}`); } catch {}
+        toast.error("Order not found, or the phone number doesn't match.");
+      })
+      .finally(() => {
+        setLoading(false);
+        setVerifying(false);
+      });
+  };
+
+  useEffect(() => {
+    if (!code) return;
+    let stored: string | null = null;
+    try { stored = sessionStorage.getItem(`order_phone_${code}`); } catch {}
+    if (stored) {
+      fetchOrder(stored);
+    } else {
+      setLoading(false);
+      setNeedsPhone(true);
+    }
   }, [code]);
+
+  const handleVerifyPhone = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!/^\d{10}$/.test(phoneInput)) {
+      toast.error("Enter the 10-digit phone number used for this order.");
+      return;
+    }
+    setVerifying(true);
+    fetchOrder(phoneInput);
+  };
 
   const copyUpi = () => {
     navigator.clipboard.writeText(UPI_ID);
@@ -78,6 +118,7 @@ export default function OrderConfirmationPage() {
       const fd = new FormData();
       fd.append("file", file);
       fd.append("orderCode", code);
+      fd.append("phone", phone || "");
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       if (!res.ok) throw new Error();
       const { url } = await res.json();
@@ -94,6 +135,37 @@ export default function OrderConfirmationPage() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-[#8B1A4A] animate-spin" />
+      </div>
+    );
+  }
+
+  if (needsPhone) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <form
+          onSubmit={handleVerifyPhone}
+          className="bg-white rounded-2xl border border-rose-100 shadow-sm p-8 max-w-sm w-full text-center"
+        >
+          <h2 className="font-serif text-xl font-bold text-gray-800 mb-2">Verify Your Order</h2>
+          <p className="text-sm text-gray-500 mb-5">
+            Enter the phone number you used at checkout to view order{" "}
+            <span className="font-bold text-[#8B1A4A]">#{code}</span>.
+          </p>
+          <input
+            value={phoneInput}
+            onChange={(e) => setPhoneInput(e.target.value)}
+            placeholder="10-digit phone number"
+            maxLength={10}
+            className="w-full px-4 py-2.5 rounded-xl border border-rose-100 bg-white text-sm text-center focus:outline-none focus:ring-2 focus:ring-rose-200 mb-4"
+          />
+          <button
+            type="submit"
+            disabled={verifying}
+            className="w-full bg-[#8B1A4A] hover:bg-[#72123b] text-white py-3 rounded-full font-bold shadow-md disabled:opacity-60"
+          >
+            {verifying ? "Checking..." : "View Order"}
+          </button>
+        </form>
       </div>
     );
   }

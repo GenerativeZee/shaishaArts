@@ -1,5 +1,8 @@
 import React from "react";
 import { Phone, Instagram, MessageCircle, MapPin } from "lucide-react";
+import { WA_LINK, CONTACT_PHONE } from "@/lib/whatsapp";
+
+const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
 
 export default function ContactPage() {
   return (
@@ -26,7 +29,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* WhatsApp */}
           <a
-            href="https://wa.me/message/CEM5UYC3ORSYJ1"
+            href={WA_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white rounded-2xl border border-rose-100 p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-all group"
@@ -36,12 +39,12 @@ export default function ContactPage() {
             </div>
             <h3 className="font-serif font-bold text-gray-800 text-lg mb-1">WhatsApp</h3>
             <p className="text-sm text-gray-500 mb-3">Chat with us for quick replies</p>
-            <span className="text-emerald-600 font-bold">9897015075</span>
+            <span className="text-emerald-600 font-bold">{CONTACT_PHONE}</span>
           </a>
 
           {/* Phone */}
           <a
-            href="tel:9897015075"
+            href={`tel:${CONTACT_PHONE}`}
             className="bg-white rounded-2xl border border-rose-100 p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-all group"
           >
             <div className="p-4 bg-rose-50 rounded-full text-[#8B1A4A] mb-4 group-hover:scale-110 transition-transform">
@@ -49,12 +52,12 @@ export default function ContactPage() {
             </div>
             <h3 className="font-serif font-bold text-gray-800 text-lg mb-1">Call Us</h3>
             <p className="text-sm text-gray-500 mb-3">Mon – Sat, 10 AM – 7 PM</p>
-            <span className="text-[#8B1A4A] font-bold">9897015075</span>
+            <span className="text-[#8B1A4A] font-bold">{CONTACT_PHONE}</span>
           </a>
 
           {/* Instagram */}
           <a
-            href="https://www.instagram.com/shaisha_arts"
+            href={INSTAGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white rounded-2xl border border-rose-100 p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-all group"

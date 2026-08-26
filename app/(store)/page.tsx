@@ -1,8 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, ShoppingCart, MessageCircle, Heart, Award, Gift, Truck } from "lucide-react";
+import { ArrowRight, ShoppingCart, MessageCircle, Heart, Award, Gift, Truck, Clock } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/store/ProductCard";
+import { WA_LINK } from "@/lib/whatsapp";
+
+const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
+
+export const dynamic = "force-dynamic";
 
 const productInclude = {
   include: {
@@ -87,7 +92,7 @@ export default async function HomePage() {
                 SHOP NOW <ArrowRight className="w-4 h-4" />
               </Link>
               <a
-                href="https://wa.me/message/CEM5UYC3ORSYJ1"
+                href={WA_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white hover:bg-emerald-50 text-[#8B1A4A] border border-rose-200 hover:border-emerald-300 px-8 py-3.5 rounded-full font-bold shadow-sm transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
@@ -95,6 +100,10 @@ export default async function HomePage() {
                 <MessageCircle className="w-5 h-5 text-emerald-500 fill-current" />
                 ORDER ON WHATSAPP
               </a>
+            </div>
+
+            <div className="mt-5 inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2 rounded-full text-xs sm:text-sm font-bold">
+              ⚡ Same-Day Delivery in Aligarh — order today, get it today!
             </div>
           </div>
 
@@ -229,7 +238,7 @@ export default async function HomePage() {
 
       {/* 4. USP FEATURES ROW */}
       <section className="bg-rose-50/50 py-12 border-b border-rose-100/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="flex flex-col items-center text-center p-4">
             <div className="p-3 bg-rose-100/60 rounded-full text-[#8B1A4A] mb-4">
               <Heart className="w-6 h-6 fill-current" />
@@ -257,6 +266,13 @@ export default async function HomePage() {
             </div>
             <h4 className="font-serif font-bold text-gray-800 text-sm">Pan India Shipping</h4>
             <p className="text-xs text-gray-500 font-medium mt-1">Safe and fast delivery across India</p>
+          </div>
+          <div className="flex flex-col items-center text-center p-4">
+            <div className="p-3 bg-rose-100/60 rounded-full text-[#8B1A4A] mb-4">
+              <Clock className="w-6 h-6" />
+            </div>
+            <h4 className="font-serif font-bold text-gray-800 text-sm">Same-Day Delivery</h4>
+            <p className="text-xs text-gray-500 font-medium mt-1">Within Aligarh, order today, get it today</p>
           </div>
         </div>
       </section>
@@ -326,7 +342,7 @@ export default async function HomePage() {
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
             <a
-              href="https://www.instagram.com/shaisha_arts"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="aspect-square rounded-2xl overflow-hidden border border-rose-50 shadow-sm relative group bg-rose-100"
@@ -341,7 +357,7 @@ export default async function HomePage() {
               </div>
             </a>
             <a
-              href="https://www.instagram.com/shaisha_arts"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="aspect-square rounded-2xl overflow-hidden border border-rose-50 shadow-sm relative group bg-rose-100"
@@ -356,7 +372,7 @@ export default async function HomePage() {
               </div>
             </a>
             <a
-              href="https://www.instagram.com/shaisha_arts"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="aspect-square rounded-2xl overflow-hidden border border-rose-50 shadow-sm relative group bg-rose-100"
@@ -371,7 +387,7 @@ export default async function HomePage() {
               </div>
             </a>
             <a
-              href="https://www.instagram.com/shaisha_arts"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="aspect-square rounded-2xl overflow-hidden border border-rose-50 shadow-sm relative group bg-rose-100"

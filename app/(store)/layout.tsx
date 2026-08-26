@@ -3,6 +3,8 @@ import Header from "@/components/store/Header";
 import Footer from "@/components/store/Footer";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function StoreLayout({
   children,
 }: {

@@ -1,5 +1,6 @@
-export const WA_LINK = "https://wa.me/message/CEM5UYC3ORSYJ1"; // general chat (header/footer/contact)
-const WA_ORDER_PHONE = "919897015074"; // regular WhatsApp — supports ?text= pre-fill
+export const WA_LINK = process.env.NEXT_PUBLIC_WHATSAPP_LINK || "https://wa.me/message/CEM5UYC3ORSYJ1"; // general chat (header/footer/contact)
+export const CONTACT_PHONE = process.env.NEXT_PUBLIC_CONTACT_PHONE || "9897015074";
+const WA_ORDER_PHONE = `91${CONTACT_PHONE}`; // regular WhatsApp — supports ?text= pre-fill
 
 export interface OrderItem {
   name: string;

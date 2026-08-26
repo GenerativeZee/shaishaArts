@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Send, Package, Palette } from "lucide-react";
+import { WA_LINK } from "@/lib/whatsapp";
 
 export default function CustomOrderPage() {
   const [form, setForm] = useState({
@@ -69,7 +70,7 @@ export default function CustomOrderPage() {
               Browse Shop
             </a>
             <a
-              href="https://wa.me/message/CEM5UYC3ORSYJ1"
+              href={WA_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-emerald-500 text-white px-6 py-3 rounded-full font-bold hover:bg-emerald-600 transition-colors"
@@ -216,7 +217,7 @@ export default function CustomOrderPage() {
               {loading ? "Sending..." : "Send Inquiry"}
             </Button>
             <a
-              href="https://wa.me/message/CEM5UYC3ORSYJ1"
+              href={WA_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-full font-bold shadow-md flex items-center gap-2 flex-1 justify-center transition-colors"

@@ -2,6 +2,8 @@ import React from "react";
 import { prisma } from "@/lib/prisma";
 import InventoryEditor from "@/components/admin/InventoryEditor";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminInventoryPage() {
   const products = await prisma.product.findMany({
     select: {

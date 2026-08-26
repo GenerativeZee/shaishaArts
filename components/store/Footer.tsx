@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Instagram, Send, Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { WA_LINK, CONTACT_PHONE } from "@/lib/whatsapp";
+
+const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -100,7 +103,7 @@ export default function Footer() {
           </p>
           <div className="flex gap-3">
             <a
-              href="https://www.instagram.com/shaisha_arts"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="p-2.5 bg-rose-50 text-rose-500 hover:bg-rose-100 rounded-full transition-all shadow-sm hover:scale-105"
@@ -108,7 +111,7 @@ export default function Footer() {
               <Instagram className="w-5 h-5" />
             </a>
             <a
-              href="https://wa.me/message/CEM5UYC3ORSYJ1"
+              href={WA_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="p-2.5 bg-emerald-50 text-emerald-500 hover:bg-emerald-100 rounded-full transition-all shadow-sm hover:scale-105"
@@ -129,7 +132,7 @@ export default function Footer() {
           <ul className="flex flex-col gap-3 text-sm font-semibold text-gray-600">
             <li className="flex gap-2.5 items-center">
               <Phone className="w-4 h-4 text-[#8B1A4A] shrink-0" />
-              <span>+91 9897015075</span>
+              <span>+91 {CONTACT_PHONE}</span>
             </li>
             <li className="flex gap-2.5 items-center">
               <Mail className="w-4 h-4 text-[#8B1A4A] shrink-0" />

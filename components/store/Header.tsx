@@ -7,6 +7,7 @@ import { ShoppingBag, Menu, X, ChevronDown, Instagram, Phone, Heart } from "luci
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { WA_LINK } from "@/lib/whatsapp";
 
 interface OfferData {
   active: boolean;
@@ -17,6 +18,7 @@ interface OfferData {
 }
 
 const WELCOME_MESSAGE = "🌸 Welcome to Shaisha Arts - Handcrafted with love, just for you!";
+const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
 
 export default function Header({ offer }: { offer?: OfferData | null }) {
   const { cartCount } = useCart();
@@ -134,7 +136,7 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Instagram Link */}
           <a
-            href="https://www.instagram.com/shaisha_arts"
+            href={INSTAGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-gray-600 hover:text-rose-500 hover:bg-rose-50 rounded-full transition-colors"
@@ -145,7 +147,7 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
 
           {/* WhatsApp Quick Link */}
           <a
-            href="https://wa.me/message/CEM5UYC3ORSYJ1"
+            href={WA_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-gray-600 hover:text-emerald-500 hover:bg-emerald-50 rounded-full transition-colors"
@@ -241,7 +243,7 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
 
                 <div className="flex gap-4 border-t border-rose-100 pt-6 justify-center">
                   <a
-                    href="https://www.instagram.com/shaisha_arts"
+                    href={INSTAGRAM_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 bg-white hover:bg-rose-50 rounded-full shadow-sm text-rose-500 transition-colors"
@@ -249,7 +251,7 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
                     <Instagram className="w-5 h-5" />
                   </a>
                   <a
-                    href="https://wa.me/message/CEM5UYC3ORSYJ1"
+                    href={WA_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 bg-white hover:bg-emerald-50 rounded-full shadow-sm text-emerald-500 transition-colors"

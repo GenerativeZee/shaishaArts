@@ -4,9 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Instagram, Send, Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { WA_LINK, CONTACT_PHONE } from "@/lib/whatsapp";
-
-const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
+import { WA_LINK, CONTACT_PHONE, INSTAGRAM_URL } from "@/lib/whatsapp";
 
 export default function Footer() {
   const [email, setEmail] = useState("");

@@ -3,9 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ShoppingCart, MessageCircle, Heart, Award, Gift, Truck, Clock } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/store/ProductCard";
-import { WA_LINK } from "@/lib/whatsapp";
-
-const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
+import { WA_LINK, INSTAGRAM_URL, INSTAGRAM_HANDLE } from "@/lib/whatsapp";
 
 export const revalidate = 60;
 
@@ -353,7 +351,7 @@ export default async function HomePage() {
       <section className="py-16 bg-white border-t border-rose-100/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="text-xs uppercase font-extrabold text-rose-500 tracking-widest">Follow us on Instagram</span>
-          <h2 className="font-serif text-2xl font-bold text-gray-900 mt-2">@shaisha_arts</h2>
+          <h2 className="font-serif text-2xl font-bold text-gray-900 mt-2">{INSTAGRAM_HANDLE}</h2>
           <div className="w-10 h-0.5 bg-rose-200 mx-auto mt-3 mb-10"></div>
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">

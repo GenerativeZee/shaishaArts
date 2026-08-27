@@ -2,6 +2,19 @@ export const WA_LINK = process.env.NEXT_PUBLIC_WHATSAPP_LINK || "https://wa.me/m
 export const CONTACT_PHONE = process.env.NEXT_PUBLIC_CONTACT_PHONE || "9897015074";
 const WA_ORDER_PHONE = `91${CONTACT_PHONE}`; // regular WhatsApp — supports ?text= pre-fill
 
+export const INSTAGRAM_URL =
+  process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/Hampers_sa_Shaishaarts";
+
+// "@handle" derived from the URL so the displayed text can never drift from the link
+export const INSTAGRAM_HANDLE = (() => {
+  try {
+    const seg = new URL(INSTAGRAM_URL).pathname.replace(/\/+$/, "").split("/").filter(Boolean).pop();
+    return seg ? `@${seg}` : "@shaishaarts";
+  } catch {
+    return "@shaishaarts";
+  }
+})();
+
 export interface OrderItem {
   name: string;
   qty: number;

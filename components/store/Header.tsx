@@ -7,7 +7,7 @@ import { ShoppingBag, Menu, X, ChevronDown, Instagram, Phone, Heart } from "luci
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { WA_LINK } from "@/lib/whatsapp";
+import { WA_LINK, INSTAGRAM_URL } from "@/lib/whatsapp";
 
 interface OfferData {
   active: boolean;
@@ -18,7 +18,6 @@ interface OfferData {
 }
 
 const WELCOME_MESSAGE = "🌸 Welcome to Shaisha Arts - Handcrafted with love, just for you!";
-const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
 
 export default function Header({ offer }: { offer?: OfferData | null }) {
   const { cartCount } = useCart();

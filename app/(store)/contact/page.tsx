@@ -1,8 +1,6 @@
 import React from "react";
 import { Phone, Instagram, MessageCircle, MapPin } from "lucide-react";
-import { WA_LINK, CONTACT_PHONE } from "@/lib/whatsapp";
-
-const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM || "https://www.instagram.com/shaisha_arts";
+import { WA_LINK, CONTACT_PHONE, INSTAGRAM_URL, INSTAGRAM_HANDLE } from "@/lib/whatsapp";
 
 export default function ContactPage() {
   return (
@@ -67,7 +65,7 @@ export default function ContactPage() {
             </div>
             <h3 className="font-serif font-bold text-gray-800 text-lg mb-1">Instagram</h3>
             <p className="text-sm text-gray-500 mb-3">Follow us for updates & inspiration</p>
-            <span className="text-purple-600 font-bold">@shaisha_arts</span>
+            <span className="text-purple-600 font-bold">{INSTAGRAM_HANDLE}</span>
           </a>
         </div>
 

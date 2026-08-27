@@ -26,7 +26,9 @@ model Product {
   slug             String  @unique
   categoryId       String
   category         Category @relation(fields: [categoryId], references: [id])
-  price            Int     // whole rupees
+  price            Int     // whole rupees — the regular price
+  salePrice        Int?    // whole rupees — discounted "offer" price; when set and lower than price, this is what customers pay
+  offerLabel       String? // optional badge text shown on the product, e.g. "Rakhi Special"
   description      String
   materials        String?
   careInstructions String?

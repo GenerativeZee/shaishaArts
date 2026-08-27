@@ -18,6 +18,8 @@ interface ProductData {
   slug: string;
   categoryId: string;
   price: number;
+  salePrice: number | null;
+  offerLabel: string;
   description: string;
   materials: string;
   careInstructions: string;
@@ -51,6 +53,8 @@ export default function ProductForm({ categories, product, takenSlugs }: Product
     slug: product?.slug || "",
     categoryId: product?.categoryId || "",
     price: product?.price?.toString() || "",
+    salePrice: product?.salePrice != null ? String(product.salePrice) : "",
+    offerLabel: product?.offerLabel || "",
     description: product?.description || "",
     materials: product?.materials || "",
     careInstructions: product?.careInstructions || "",
@@ -76,6 +80,14 @@ export default function ProductForm({ categories, product, takenSlugs }: Product
   const slugWillChange = normalizedSlug.length > 0 && resolvedSlug !== normalizedSlug;
 
   const selectedCategoryName = categories.find((c) => c.id === form.categoryId)?.name || "";
+
+  // Offer-price feedback
+  const priceNum = Number(form.price);
+  const saleNum = Number(form.salePrice);
+  const hasSale = form.salePrice.trim() !== "" && saleNum > 0;
+  const saleTooHigh = hasSale && priceNum > 0 && saleNum >= priceNum;
+  const saleSavings = hasSale && !saleTooHigh && priceNum > 0 ? priceNum - saleNum : 0;
+  const salePercent = saleSavings > 0 ? Math.round((saleSavings / priceNum) * 100) : 0;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -129,9 +141,20 @@ export default function ProductForm({ categories, product, takenSlugs }: Product
       toast.error("Please fill all required fields.");
       return;
     }
+    if (saleTooHigh) {
+      toast.error(`The offer price must be lower than the regular price (₹${priceNum}).`);
+      return;
+    }
     setLoading(true);
     try {
-      const payload = { ...form, price: Number(form.price), stock: Number(form.stock), images };
+      const payload = {
+        ...form,
+        price: Number(form.price),
+        stock: Number(form.stock),
+        salePrice: form.salePrice.trim() === "" ? null : Number(form.salePrice),
+        offerLabel: form.offerLabel.trim(),
+        images,
+      };
       const url = product ? `/api/admin/products/${product.id}` : "/api/admin/products";
       const method = product ? "PUT" : "POST";
       const res = await fetch(url, {
@@ -272,6 +295,54 @@ export default function ProductForm({ categories, product, takenSlugs }: Product
             <label className={labelCls}>Price (₹) <span className="text-red-500">*</span></label>
             <input name="price" value={form.price} onChange={handleChange} type="number" min={0} placeholder="499" required className={inputCls} />
           </div>
+
+          <div>
+            <label className={labelCls}>
+              Offer Price (₹){" "}
+              <span className="text-gray-400 font-normal normal-case tracking-normal">(optional)</span>
+            </label>
+            <input
+              name="salePrice"
+              value={form.salePrice}
+              onChange={handleChange}
+              type="number"
+              min={0}
+              placeholder="e.g. 399"
+              className={inputCls + (saleTooHigh ? " border-red-400 bg-red-50 focus:ring-red-200" : "")}
+            />
+            {saleTooHigh ? (
+              <p className="mt-1 text-xs font-medium text-red-500">
+                Must be lower than the regular price (₹{priceNum}).
+              </p>
+            ) : saleSavings > 0 ? (
+              <p className="mt-1 text-xs font-medium text-emerald-600">
+                Customers pay ₹{saleNum} — save ₹{saleSavings} ({salePercent}% off). Leave blank to remove the offer.
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-gray-400">
+                Set a lower price to put this product on offer. The old price shows struck-through in the store.
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className={labelCls}>
+              Offer Label{" "}
+              <span className="text-gray-400 font-normal normal-case tracking-normal">(optional)</span>
+            </label>
+            <input
+              name="offerLabel"
+              value={form.offerLabel}
+              onChange={handleChange}
+              placeholder="e.g. Rakhi Special"
+              maxLength={30}
+              className={inputCls}
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              Small badge shown on the product. If left blank and an offer price is set, a “−{salePercent || "X"}%” badge is shown automatically.
+            </p>
+          </div>
+
           <div>
             <label className={labelCls}>Stock Quantity</label>
             <input name="stock" value={form.stock} onChange={handleChange} type="number" min={0} placeholder="10" className={inputCls} />

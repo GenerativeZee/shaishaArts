@@ -57,6 +57,8 @@ export default async function AdminProductEditPage({ params }: AdminProductEditP
                   slug: product.slug,
                   categoryId: product.categoryId,
                   price: product.price,
+                  salePrice: product.salePrice,
+                  offerLabel: product.offerLabel || "",
                   description: product.description,
                   materials: product.materials || "",
                   careInstructions: product.careInstructions || "",

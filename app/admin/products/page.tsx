@@ -62,7 +62,16 @@ export default async function AdminProductsPage() {
                         </div>
                       </td>
                       <td className="px-5 py-3 text-gray-500">{product.category.name}</td>
-                      <td className="px-5 py-3 text-right font-bold text-gray-800">₹{product.price}</td>
+                      <td className="px-5 py-3 text-right font-bold text-gray-800">
+                        {product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price ? (
+                          <span className="inline-flex items-baseline gap-1.5">
+                            <span className="text-emerald-600">₹{product.salePrice}</span>
+                            <span className="text-xs font-semibold text-gray-400 line-through">₹{product.price}</span>
+                          </span>
+                        ) : (
+                          <>₹{product.price}</>
+                        )}
+                      </td>
                       <td className="px-5 py-3 text-right">
                         <span className={`font-bold ${product.stock < 5 ? "text-red-500" : "text-gray-800"}`}>
                           {product.stock}
@@ -75,7 +84,10 @@ export default async function AdminProductsPage() {
                       </td>
                       <td className="px-5 py-3 text-center text-xs text-gray-500">
                         {product.isFeatured && <span className="mr-1">⭐</span>}
-                        {product.isBestseller && <span>🔥</span>}
+                        {product.isBestseller && <span className="mr-1">🔥</span>}
+                        {product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price && (
+                          <span title="On offer">🏷️</span>
+                        )}
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-1 justify-end">

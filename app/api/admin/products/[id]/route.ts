@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { uniqueProductSlug } from "@/lib/slug";
 import { errorResponse } from "@/lib/api-error";
+import { parseSalePrice } from "@/lib/price";
 
 export async function PUT(
   req: NextRequest,
@@ -10,10 +11,25 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { name, slug, categoryId, price, description, materials, careInstructions, stock, images, isFeatured, isBestseller, isActive, isCollectionCover } = body;
+    const { name, slug, categoryId, price, description, materials, careInstructions, stock, images, isFeatured, isBestseller, isActive, isCollectionCover, salePrice, offerLabel } = body;
 
     // Keep the URL slug unique — auto-suffix rather than reject on a clash.
     const finalSlug = slug ? await uniqueProductSlug(slug, id) : undefined;
+
+    // Validate the offer price against the regular price (new one if supplied,
+    // otherwise the product's current price).
+    let saleValue: number | null | undefined;
+    if (salePrice !== undefined) {
+      const existing =
+        price !== undefined
+          ? Math.round(Number(price))
+          : (await prisma.product.findUnique({ where: { id }, select: { price: true } }))?.price ?? 0;
+      const sale = parseSalePrice(salePrice, existing);
+      if ("error" in sale) {
+        return NextResponse.json({ error: sale.error }, { status: 400 });
+      }
+      saleValue = sale.value;
+    }
 
     const product = await prisma.product.update({
       where: { id },
@@ -22,6 +38,8 @@ export async function PUT(
         ...(finalSlug && { slug: finalSlug }),
         ...(categoryId && { categoryId }),
         ...(price !== undefined && { price: Math.round(Number(price)) }),
+        ...(saleValue !== undefined && { salePrice: saleValue }),
+        ...(offerLabel !== undefined && { offerLabel: offerLabel?.trim() || null }),
         ...(description && { description }),
         ...(materials !== undefined && { materials }),
         ...(careInstructions !== undefined && { careInstructions }),

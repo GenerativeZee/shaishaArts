@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
 import StarRating from "./StarRating";
+import { effectivePrice, isOnOffer, discountPercent } from "@/lib/price";
 
 interface ProductCardProps {
   product: {
@@ -14,6 +15,8 @@ interface ProductCardProps {
     name: string;
     slug: string;
     price: number;
+    salePrice?: number | null;
+    offerLabel?: string | null;
     images: string;
     stock: number;
     isBestseller: boolean;
@@ -43,6 +46,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   const isOutOfStock = product.stock <= 0;
   const isLowStock = !isOutOfStock && product.stock <= 5;
 
+  const onOffer = isOnOffer(product);
+  const shownPrice = effectivePrice(product);
+  const offerPct = discountPercent(product);
+  const offerBadge = product.offerLabel?.trim() || (offerPct > 0 ? `−${offerPct}%` : "");
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -52,7 +60,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     addToCart({
       productId: product.id,
       name: product.name,
-      price: product.price,
+      price: shownPrice,
       image: primaryImage,
       slug: product.slug,
     });
@@ -78,6 +86,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Badges — top-left */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 items-start pointer-events-none">
+        {onOffer && offerBadge && (
+          <span className="bg-emerald-500 text-white text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-full shadow">
+            {offerBadge}
+          </span>
+        )}
         {product.isBestseller && (
           <span className="bg-rose-500 text-white text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-full shadow">
             🔥 Bestseller
@@ -171,7 +184,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-rose-50/80">
           <div>
             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block leading-none mb-0.5">Price</span>
-            <span className="text-xl font-extrabold text-[#8B1A4A]">₹{product.price}</span>
+            <span className="flex items-baseline gap-1.5">
+              <span className="text-xl font-extrabold text-[#8B1A4A]">₹{shownPrice}</span>
+              {onOffer && (
+                <span className="text-xs font-semibold text-gray-400 line-through">₹{product.price}</span>
+              )}
+            </span>
           </div>
 
           <button

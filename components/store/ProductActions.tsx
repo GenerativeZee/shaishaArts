@@ -5,12 +5,15 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ShoppingCart, Plus, Minus, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { effectivePrice, isOnOffer, discountPercent } from "@/lib/price";
 
 interface Product {
   id: string;
   name: string;
   slug: string;
   price: number;
+  salePrice?: number | null;
+  offerLabel?: string | null;
   stock: number;
   description: string;
   materials?: string | null;
@@ -26,6 +29,10 @@ export default function ProductActions({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
 
   const isOutOfStock = product.stock <= 0;
+  const onOffer = isOnOffer(product);
+  const shownPrice = effectivePrice(product);
+  const offerPct = discountPercent(product);
+  const offerBadge = product.offerLabel?.trim() || (offerPct > 0 ? `−${offerPct}%` : "");
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
@@ -33,7 +40,7 @@ export default function ProductActions({ product }: { product: Product }) {
       {
         productId: product.id,
         name: product.name,
-        price: product.price,
+        price: shownPrice,
         image: product.images[0],
         slug: product.slug,
       },
@@ -111,7 +118,19 @@ export default function ProductActions({ product }: { product: Product }) {
           )}
         </div>
 
-        <div className="text-3xl font-bold text-[#8B1A4A] mt-4">₹{product.price}</div>
+        <div className="mt-4 flex items-baseline gap-3 flex-wrap">
+          <span className="text-3xl font-bold text-[#8B1A4A]">₹{shownPrice}</span>
+          {onOffer && (
+            <>
+              <span className="text-lg font-semibold text-gray-400 line-through">₹{product.price}</span>
+              {offerBadge && (
+                <span className="bg-emerald-500 text-white text-xs uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-full">
+                  {offerBadge}
+                </span>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Description */}
         <p className="text-gray-600 text-sm leading-relaxed mt-4">{product.description}</p>

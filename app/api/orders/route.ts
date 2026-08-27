@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateOrderCode } from "@/lib/orderCode";
 import { computeDiscount, couponMatches } from "@/lib/coupon";
+import { effectivePrice } from "@/lib/price";
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,7 +68,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: `Insufficient stock for ${product.name}. Available: ${product.stock}` }, { status: 400 });
       }
 
-      computedTotal += product.price * qty;
+      // Honour the per-product offer price when one is set
+      const unitPrice = effectivePrice(product);
+      computedTotal += unitPrice * qty;
 
       // Get primary image
       let primaryImage = "";
@@ -82,7 +85,7 @@ export async function POST(req: NextRequest) {
         productId: product.id,
         name: product.name,
         qty,
-        price: product.price,
+        price: unitPrice,
         image: primaryImage,
         slug: product.slug,
       });

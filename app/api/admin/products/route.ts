@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { uniqueProductSlug } from "@/lib/slug";
 import { errorResponse } from "@/lib/api-error";
+import { parseSalePrice } from "@/lib/price";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, slug, categoryId, price, description, materials, careInstructions, stock, images, isFeatured, isBestseller, isActive, isCollectionCover } = body;
+    const { name, slug, categoryId, price, description, materials, careInstructions, stock, images, isFeatured, isBestseller, isActive, isCollectionCover, salePrice, offerLabel } = body;
 
     const missing = [
       !name && "name",
@@ -28,6 +29,12 @@ export async function POST(req: NextRequest) {
 
     const makeCover = Boolean(isCollectionCover);
 
+    const regularPrice = Math.round(Number(price));
+    const sale = parseSalePrice(salePrice, regularPrice);
+    if ("error" in sale) {
+      return NextResponse.json({ error: sale.error }, { status: 400 });
+    }
+
     // Guarantee a unique URL slug — auto-suffix (bag-charm-2, -3, …) instead of
     // rejecting a duplicate name, matching how WordPress/Shopify behave.
     const finalSlug = await uniqueProductSlug(slug || name);
@@ -37,7 +44,9 @@ export async function POST(req: NextRequest) {
         name,
         slug: finalSlug,
         categoryId,
-        price: Math.round(Number(price)),
+        price: regularPrice,
+        salePrice: sale.value,
+        offerLabel: offerLabel?.trim() || null,
         description,
         materials,
         careInstructions,

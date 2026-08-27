@@ -78,17 +78,18 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
 
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex justify-between items-center">
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center group shrink-0">
-          <img
-            src="/logo.png"
-            alt="Shaisha Arts"
-            className="h-12 sm:h-16 lg:h-20 w-auto object-contain drop-shadow-[0_2px_5px_rgba(139,26,74,0.35)] transition-transform group-hover:scale-105"
-          />
-        </Link>
+        <div className="flex items-center gap-6 lg:gap-10">
+          {/* Brand Logo */}
+          <Link href="/" className="flex items-center group shrink-0">
+            <img
+              src="/logo.png"
+              alt="Shaisha Arts"
+              className="h-14 sm:h-[72px] lg:h-[88px] w-auto object-contain drop-shadow-[0_2px_5px_rgba(139,26,74,0.35)] transition-transform group-hover:scale-105"
+            />
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-8">
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -123,7 +124,8 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
               ))}
             </div>
           </div>
-        </nav>
+          </nav>
+        </div>
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-2 sm:gap-4">

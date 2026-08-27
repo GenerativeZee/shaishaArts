@@ -77,21 +77,14 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
       </div>
 
       {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
-        {/* Brand Logo & Name */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative w-12 h-12 rounded-full border border-rose-200 bg-[#FFF5F8] flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
-            {/* Simple Wreath/Flower Logo Mockup */}
-            <span className="text-xl">🌸</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-2xl font-bold tracking-wide text-[#8B1A4A] leading-none">
-              Shaisha
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-rose-500 font-bold leading-none mt-1">
-              Arts
-            </span>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex justify-between items-center">
+        {/* Brand Logo */}
+        <Link href="/" className="flex items-center group shrink-0">
+          <img
+            src="/logo.png"
+            alt="Shaisha Arts"
+            className="h-12 sm:h-16 lg:h-20 w-auto object-contain drop-shadow-[0_2px_5px_rgba(139,26,74,0.35)] transition-transform group-hover:scale-105"
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -190,8 +183,12 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
               <Menu className="w-6 h-6" />
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] border-l border-rose-100 bg-[#FFF5F8]">
-              <SheetTitle className="text-left font-serif text-xl text-[#8B1A4A] border-b border-rose-100 pb-4">
-                🌸 Shaisha Arts
+              <SheetTitle className="flex items-center border-b border-rose-100 pb-4">
+                <img
+                  src="/logo.png"
+                  alt="Shaisha Arts"
+                  className="h-14 w-auto object-contain drop-shadow-[0_2px_5px_rgba(139,26,74,0.35)]"
+                />
               </SheetTitle>
               <div className="flex flex-col gap-6 mt-6">
                 <div className="flex flex-col gap-3">

@@ -54,13 +54,12 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
         {/* Brand Info */}
         <div className="flex flex-col gap-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-[#FFF5F8] flex items-center justify-center border border-rose-200">
-              <span className="text-base">🌸</span>
-            </div>
-            <span className="font-serif text-xl font-bold tracking-wide text-[#8B1A4A]">
-              Shaisha Arts
-            </span>
+          <Link href="/" className="flex items-center">
+            <img
+              src="/logo.png"
+              alt="Shaisha Arts"
+              className="h-16 w-auto object-contain drop-shadow-[0_2px_5px_rgba(139,26,74,0.35)]"
+            />
           </Link>
           <p className="text-gray-500 text-sm leading-relaxed font-medium">
             Handcrafted with love, passion, and creativity. We bring you unique custom accessories, anti-tarnish jewelry, macrame designs, and personalized gift hampers to make every occasion memorable.

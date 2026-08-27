@@ -1,3 +1,7 @@
+// Orders at or above this cart subtotal (₹) ship free; below it, shipping is
+// quoted when the order is confirmed on WhatsApp.
+export const FREE_SHIPPING_THRESHOLD = 999;
+
 export const ORDER_STATUSES = [
   "RECEIVED",
   "PAYMENT_VERIFICATION",

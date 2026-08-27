@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 
 export default function CartPage() {
   const { items, updateQty, removeFromCart, cartTotal, clearCart, isLoaded } = useCart();
@@ -137,9 +138,15 @@ export default function CartPage() {
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between items-center font-bold text-gray-900 text-lg mb-6">
+              <div className="flex justify-between items-center font-bold text-gray-900 text-lg mb-3">
                 <span>Total</span>
                 <span className="text-[#8B1A4A]">₹{cartTotal}</span>
+              </div>
+
+              <div className="mb-5 text-xs font-medium rounded-xl px-3 py-2.5 bg-rose-50 text-[#8B1A4A]">
+                {cartTotal >= FREE_SHIPPING_THRESHOLD
+                  ? "🎉 Your order qualifies for FREE shipping!"
+                  : `🚚 Add ₹${FREE_SHIPPING_THRESHOLD - cartTotal} more to get FREE shipping (over ₹${FREE_SHIPPING_THRESHOLD})`}
               </div>
 
               <Link href="/checkout">

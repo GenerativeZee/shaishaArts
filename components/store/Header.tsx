@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { WA_LINK, INSTAGRAM_URL } from "@/lib/whatsapp";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 
 interface OfferData {
   active: boolean;
@@ -69,9 +70,9 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
           {announcements[announceIdx % announcements.length]}
         </div>
         <div className="flex items-center gap-3">
-          <span>🇮🇳 Pan India Shipping</span>
+          <span>🚚 Free shipping on orders over ₹{FREE_SHIPPING_THRESHOLD}</span>
           <span className="hidden sm:inline">|</span>
-          <span>💖 Made With Love</span>
+          <span className="hidden sm:inline">💖 Made With Love</span>
         </div>
       </div>
 

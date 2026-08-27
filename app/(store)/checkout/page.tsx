@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, CheckCircle2, XCircle, Gift, Tag, Loader2 } from "lucide-react";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
 
 const INDIAN_STATES = [
   "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat",
@@ -361,8 +362,18 @@ export default function CheckoutPage() {
                     </div>
                   )}
                   <div className="flex justify-between text-gray-500">
-                    <span>Shipping</span><span className="text-emerald-600 font-semibold">FREE 🎉</span>
+                    <span>Shipping</span>
+                    {cartTotal >= FREE_SHIPPING_THRESHOLD ? (
+                      <span className="text-emerald-600 font-semibold">FREE 🎉</span>
+                    ) : (
+                      <span className="text-gray-500 font-medium">Quoted on confirmation</span>
+                    )}
                   </div>
+                  {cartTotal < FREE_SHIPPING_THRESHOLD && (
+                    <p className="text-xs text-[#8B1A4A] font-medium">
+                      🚚 Add ₹{FREE_SHIPPING_THRESHOLD - cartTotal} more to get FREE shipping
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex justify-between font-bold text-gray-900 text-lg mb-5">

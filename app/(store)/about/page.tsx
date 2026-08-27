@@ -21,10 +21,10 @@ export default function AboutPage() {
       {/* Story Section */}
       <section className="py-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div className="relative">
-          <div className="rounded-3xl overflow-hidden border-8 border-white shadow-2xl aspect-[4/3] bg-rose-50 rotate-[-2deg]">
+          <div className="rounded-3xl overflow-hidden border-8 border-white shadow-2xl aspect-[3/4] max-w-sm mx-auto bg-rose-50 rotate-[-2deg]">
             <img
-              src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=700"
-              alt="Handmade Art Creation"
+              src="/about-photo.jpg"
+              alt="Shaisha Arts Founder"
               className="w-full h-full object-cover"
             />
           </div>

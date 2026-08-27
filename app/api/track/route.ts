@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, "track", 10, 60_000);
+  if (limited) return limited;
+
   try {
     const body = await req.json();
     const { code, phone } = body;
@@ -10,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Order Code and Phone Number are required" }, { status: 400 });
     }
 
-    // Search order matching code AND phone
+    // Match must be on BOTH the code and the phone used to place the order.
     const order = await prisma.order.findFirst({
       where: {
         code: { equals: code },
@@ -35,14 +39,10 @@ export async function POST(req: NextRequest) {
       // empty
     }
 
+    // Return only what the track page shows — never the customer's name,
+    // address, or phone (this endpoint is public and codes are enumerable).
     return NextResponse.json({
       code: order.code,
-      customerName: order.customerName,
-      phone: order.phone,
-      address: order.address,
-      city: order.city,
-      state: order.state,
-      pincode: order.pincode,
       status: order.status,
       history: order.history,
       items: parsedItems,

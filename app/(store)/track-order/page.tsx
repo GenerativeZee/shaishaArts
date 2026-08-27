@@ -66,7 +66,7 @@ export default function TrackOrderPage() {
           </span>
           <h1 className="font-serif text-4xl font-bold text-gray-900 mt-4">Track Your Order</h1>
           <p className="mt-3 text-gray-500 max-w-md mx-auto text-sm">
-            Enter your Order ID (e.g. SA1001) and the mobile number used while placing the order.
+            Enter your Order ID (e.g. SA1042-K7QX) and the mobile number used while placing the order.
           </p>
           <div className="w-16 h-0.5 bg-rose-200 mx-auto mt-5"></div>
         </div>
@@ -86,7 +86,7 @@ export default function TrackOrderPage() {
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="e.g. SA1001"
+                placeholder="e.g. SA1042-K7QX"
                 className="w-full px-4 py-3 rounded-xl border border-rose-100 bg-rose-50/30 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 uppercase"
               />
             </div>

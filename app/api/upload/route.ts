@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadImage } from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, "upload", 15, 60_000);
+  if (limited) return limited;
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;

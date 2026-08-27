@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
+  const limited = rateLimit(req, "order-by-code", 15, 60_000);
+  if (limited) return limited;
+
   try {
     const resolvedParams = await params;
     const { code } = resolvedParams;

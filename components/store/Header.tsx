@@ -184,15 +184,15 @@ export default function Header({ offer }: { offer?: OfferData | null }) {
             <SheetTrigger className="lg:hidden p-2 text-gray-600 hover:bg-rose-50 rounded-full transition-colors">
               <Menu className="w-6 h-6" />
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] border-l border-rose-100 bg-[#FFF5F8]">
-              <SheetTitle className="flex items-center border-b border-rose-100 pb-4">
+            <SheetContent side="right" className="w-[300px] border-l border-rose-100 bg-[#FFF5F8] p-5">
+              <SheetTitle className="flex items-center border-b border-rose-100 pb-3">
                 <img
                   src="/logo.png"
                   alt="Shaisha Arts"
                   className="h-14 w-auto object-contain drop-shadow-[0_2px_5px_rgba(139,26,74,0.35)]"
                 />
               </SheetTitle>
-              <div className="flex flex-col gap-6 mt-6">
+              <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-3">
                   <span className="text-xs uppercase font-bold tracking-widest text-rose-400">Navigation</span>
                   {navLinks.map((link) => (

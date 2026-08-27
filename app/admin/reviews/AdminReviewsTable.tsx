@@ -36,11 +36,14 @@ export default function AdminReviewsTable({ initialReviews }: { initialReviews: 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isApproved: true }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       setReviews((prev) => prev.map((r) => r.id === id ? { ...r, isApproved: true } : r));
       toast.success("Review approved and published.");
-    } catch {
-      toast.error("Failed to approve review.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't approve the review. Try again.");
     } finally {
       setLoading(null);
     }
@@ -51,11 +54,14 @@ export default function AdminReviewsTable({ initialReviews }: { initialReviews: 
     setLoading(id);
     try {
       const res = await fetch(`/api/admin/reviews/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       setReviews((prev) => prev.filter((r) => r.id !== id));
       toast.success("Review deleted.");
-    } catch {
-      toast.error("Failed to delete review.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't delete the review. Try again.");
     } finally {
       setLoading(null);
     }

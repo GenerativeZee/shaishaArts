@@ -21,11 +21,14 @@ export default function ReviewActions({ reviewId, isApproved, onUpdate }: Review
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isApproved: true }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       toast.success("Review approved.");
       onUpdate();
-    } catch {
-      toast.error("Failed to approve review.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't approve the review. Try again.");
     } finally {
       setLoading(false);
     }
@@ -36,11 +39,14 @@ export default function ReviewActions({ reviewId, isApproved, onUpdate }: Review
     setLoading(true);
     try {
       const res = await fetch(`/api/admin/reviews/${reviewId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       toast.success("Review deleted.");
       onUpdate();
-    } catch {
-      toast.error("Failed to delete review.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't delete the review. Try again.");
     } finally {
       setLoading(false);
     }

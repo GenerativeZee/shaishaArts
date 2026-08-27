@@ -26,18 +26,21 @@ interface ProductData {
   isFeatured: boolean;
   isBestseller: boolean;
   isActive: boolean;
+  isCollectionCover: boolean;
 }
 
 interface ProductFormProps {
   categories: Category[];
   product: ProductData | null;
+  /** Slugs already used by other products (current product's own slug excluded). */
+  takenSlugs: string[];
 }
 
 const labelCls = "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5";
 const inputCls =
   "w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-rose-200";
 
-export default function ProductForm({ categories, product }: ProductFormProps) {
+export default function ProductForm({ categories, product, takenSlugs }: ProductFormProps) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -55,8 +58,24 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
     isFeatured: product?.isFeatured ?? false,
     isBestseller: product?.isBestseller ?? false,
     isActive: product?.isActive ?? true,
+    isCollectionCover: product?.isCollectionCover ?? false,
   });
   const [images, setImages] = useState<string[]>(product?.images || []);
+
+  const takenSlugSet = React.useMemo(() => new Set(takenSlugs), [takenSlugs]);
+  const normalizedSlug = form.slug.trim().toLowerCase();
+
+  // Predict the slug the server will actually save: if this one is taken it gets
+  // auto-suffixed (bag-charm-2, -3, …) instead of blocking the save.
+  const resolvedSlug = React.useMemo(() => {
+    if (!normalizedSlug || !takenSlugSet.has(normalizedSlug)) return normalizedSlug;
+    let n = 2;
+    while (takenSlugSet.has(`${normalizedSlug}-${n}`)) n++;
+    return `${normalizedSlug}-${n}`;
+  }, [normalizedSlug, takenSlugSet]);
+  const slugWillChange = normalizedSlug.length > 0 && resolvedSlug !== normalizedSlug;
+
+  const selectedCategoryName = categories.find((c) => c.id === form.categoryId)?.name || "";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -121,15 +140,15 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
-        const data = await res.json();
-        toast.error(data.error || "Failed to save product.");
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || "Couldn't save the product. Check the fields and try again.");
         return;
       }
       toast.success(product ? "Product updated!" : "Product created!");
       router.push("/admin/products");
       router.refresh();
     } catch {
-      toast.error("Something went wrong.");
+      toast.error("Couldn't reach the server. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -163,8 +182,18 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
                 onChange={handleChange}
                 placeholder="anti-tarnish-necklace"
                 required
-                className={inputCls + " font-mono text-xs"}
+                className={
+                  inputCls +
+                  " font-mono text-xs " +
+                  (slugWillChange ? "border-amber-300 bg-amber-50 focus:ring-amber-200" : "")
+                }
               />
+              {slugWillChange && (
+                <p className="mt-1 text-xs font-medium text-amber-600">
+                  Another product already uses this name. This one will be saved at{" "}
+                  <span className="font-mono">/product/{resolvedSlug}</span>. Edit the slug above to change it.
+                </p>
+              )}
             </div>
             <div>
               <label className={labelCls}>Category <span className="text-red-500">*</span></label>
@@ -255,18 +284,34 @@ export default function ProductForm({ categories, product }: ProductFormProps) {
             { name: "isActive", label: "Active (visible in store)" },
             { name: "isFeatured", label: "Featured (shown on homepage)" },
             { name: "isBestseller", label: "Bestseller badge" },
+            {
+              name: "isCollectionCover",
+              label: selectedCategoryName
+                ? `Homepage tile image for "${selectedCategoryName}"`
+                : "Homepage tile image for its category",
+            },
           ].map(({ name, label }) => (
-            <label key={name} className="flex items-center gap-3 cursor-pointer">
+            <label key={name} className="flex items-start gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 name={name}
                 checked={form[name as keyof typeof form] as boolean}
                 onChange={handleChange}
-                className="w-4 h-4 rounded accent-[#8B1A4A]"
+                className="w-4 h-4 mt-0.5 shrink-0 rounded accent-[#8B1A4A]"
               />
               <span className="text-sm text-gray-700 font-medium">{label}</span>
             </label>
           ))}
+          {form.isCollectionCover && images.length === 0 && (
+            <p className="text-xs font-medium text-amber-600">
+              Add at least one product image — the first image is what shows on the homepage tile.
+            </p>
+          )}
+          {form.isCollectionCover && (
+            <p className="text-xs text-gray-400">
+              Only one product per category can be the tile image. Turning this on replaces the current one for this category.
+            </p>
+          )}
         </div>
 
         <Button

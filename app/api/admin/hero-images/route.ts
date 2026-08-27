@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { errorResponse } from "@/lib/api-error";
 
 export async function GET() {
   const images = await prisma.heroImage.findMany({ orderBy: { order: "asc" } });
@@ -10,7 +11,7 @@ export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
     if (!url) {
-      return NextResponse.json({ error: "url is required" }, { status: 400 });
+      return NextResponse.json({ error: "The image didn't upload correctly. Try choosing the file again." }, { status: 400 });
     }
     const existing = await prisma.heroImage.findMany({ orderBy: { order: "desc" }, take: 1 });
     if ((await prisma.heroImage.count()) >= 4) {
@@ -23,7 +24,6 @@ export async function POST(req: NextRequest) {
     const image = await prisma.heroImage.create({ data: { url, order: nextOrder } });
     return NextResponse.json(image);
   } catch (error) {
-    console.error("POST Hero Image Error:", error);
-    return NextResponse.json({ error: "Failed to add hero image" }, { status: 500 });
+    return errorResponse(error, "hero image");
   }
 }

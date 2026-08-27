@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { errorResponse } from "@/lib/api-error";
 
 export async function GET(
   req: NextRequest,
@@ -11,10 +12,14 @@ export async function GET(
       where: { id },
       include: { history: { orderBy: { changedAt: "asc" } } },
     });
-    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    if (!order) {
+      return NextResponse.json(
+        { error: "This order could not be found — it may have been deleted." },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(order);
   } catch (error) {
-    console.error("Admin get order error:", error);
-    return NextResponse.json({ error: "Failed to fetch order" }, { status: 500 });
+    return errorResponse(error, "order");
   }
 }

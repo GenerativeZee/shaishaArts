@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { errorResponse } from "@/lib/api-error";
 
 export async function GET(req: NextRequest) {
   try {
@@ -25,7 +26,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(orders);
   } catch (error) {
-    console.error("Admin orders list error:", error);
-    return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
+    return errorResponse(error, "orders list");
   }
 }

@@ -14,11 +14,14 @@ export default function DeleteProductButton({ productId }: { productId: string }
     setLoading(true);
     try {
       const res = await fetch(`/api/admin/products/${productId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       toast.success("Product deleted.");
       router.refresh();
-    } catch {
-      toast.error("Failed to delete product.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't delete the product. Try again.");
     } finally {
       setLoading(false);
     }

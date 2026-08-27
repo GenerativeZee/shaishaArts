@@ -13,12 +13,17 @@ export default async function AdminProductEditPage({ params }: AdminProductEditP
   const { id } = await params;
   const isNew = id === "new";
 
-  const [categories, product] = await Promise.all([
+  const [categories, product, existingSlugs] = await Promise.all([
     prisma.category.findMany({ orderBy: { name: "asc" } }),
     isNew
       ? Promise.resolve(null)
       : prisma.product.findUnique({ where: { id }, include: { category: { select: { name: true, slug: true } } } }),
+    prisma.product.findMany({ select: { slug: true } }),
   ]);
+
+  const takenSlugs = existingSlugs
+    .map((p) => p.slug)
+    .filter((s) => s !== product?.slug);
 
   if (!isNew && !product) notFound();
 
@@ -43,6 +48,7 @@ export default async function AdminProductEditPage({ params }: AdminProductEditP
 
       <ProductForm
           categories={categories}
+          takenSlugs={takenSlugs}
           product={
             product
               ? {
@@ -59,6 +65,7 @@ export default async function AdminProductEditPage({ params }: AdminProductEditP
                   isFeatured: product.isFeatured,
                   isBestseller: product.isBestseller,
                   isActive: product.isActive,
+                  isCollectionCover: product.isCollectionCover,
                 }
               : null
           }

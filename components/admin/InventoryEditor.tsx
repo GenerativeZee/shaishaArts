@@ -27,10 +27,13 @@ export default function InventoryEditor({ products }: { products: Product[] }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId, stock: stocks[productId] }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       toast.success("Stock updated!");
-    } catch {
-      toast.error("Failed to update stock.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't update the stock. Try again.");
     } finally {
       setSaving((prev) => ({ ...prev, [productId]: false }));
     }

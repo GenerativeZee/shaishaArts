@@ -54,11 +54,14 @@ export default function HeroImageEditor({ images }: { images: HeroImage[] }) {
     setBusyId(id);
     try {
       const res = await fetch(`/api/admin/hero-images/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       toast.success("Image removed.");
       router.refresh();
-    } catch {
-      toast.error("Failed to remove image.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't remove the image. Try again.");
     } finally {
       setBusyId(null);
     }
@@ -69,7 +72,7 @@ export default function HeroImageEditor({ images }: { images: HeroImage[] }) {
     const b = images[idxB];
     setBusyId(a.id);
     try {
-      await Promise.all([
+      const [resA, resB] = await Promise.all([
         fetch(`/api/admin/hero-images/${a.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -81,9 +84,13 @@ export default function HeroImageEditor({ images }: { images: HeroImage[] }) {
           body: JSON.stringify({ order: a.order }),
         }),
       ]);
+      if (!resA.ok || !resB.ok) {
+        const data = await (resA.ok ? resB : resA).json().catch(() => ({}));
+        throw new Error(data.error || "");
+      }
       router.refresh();
-    } catch {
-      toast.error("Failed to reorder.");
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : "Couldn't reorder the images. Try again.");
     } finally {
       setBusyId(null);
     }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { errorResponse } from "@/lib/api-error";
 
 export async function GET() {
   try {
@@ -9,25 +10,23 @@ export async function GET() {
     });
     return NextResponse.json(products);
   } catch (error) {
-    console.error("Inventory GET error:", error);
-    return NextResponse.json({ error: "Failed to fetch inventory" }, { status: 500 });
+    return errorResponse(error, "inventory");
   }
 }
 
 export async function PATCH(req: NextRequest) {
   try {
     const { productId, stock } = await req.json();
-    if (!productId || stock === undefined || stock < 0) {
-      return NextResponse.json({ error: "productId and valid stock required" }, { status: 400 });
+    if (!productId || stock === undefined || Number(stock) < 0 || Number.isNaN(Number(stock))) {
+      return NextResponse.json({ error: "Enter a stock quantity of 0 or more." }, { status: 400 });
     }
     const product = await prisma.product.update({
       where: { id: productId },
-      data: { stock: Number(stock) },
+      data: { stock: Math.round(Number(stock)) },
       select: { id: true, name: true, stock: true },
     });
     return NextResponse.json(product);
   } catch (error) {
-    console.error("Inventory PATCH error:", error);
-    return NextResponse.json({ error: "Failed to update stock" }, { status: 500 });
+    return errorResponse(error, "stock level");
   }
 }

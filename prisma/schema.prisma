@@ -35,6 +35,7 @@ model Product {
   isFeatured       Boolean @default(false)
   isBestseller     Boolean @default(false)
   isActive         Boolean @default(true)
+  isCollectionCover Boolean @default(false) // if true, this product's first image is used as the homepage collection tile for its category
   createdAt        DateTime @default(now())
   reviews          Review[]
 }

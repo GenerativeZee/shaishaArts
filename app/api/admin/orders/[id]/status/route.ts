@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isValidTransition } from "@/lib/constants";
+import { errorResponse } from "@/lib/api-error";
 
 export async function PATCH(
   req: NextRequest,
@@ -11,7 +12,7 @@ export async function PATCH(
     const { status } = await req.json();
 
     if (!status) {
-      return NextResponse.json({ error: "Status required" }, { status: 400 });
+      return NextResponse.json({ error: "Pick the new status you want to move this order to." }, { status: 400 });
     }
 
     const order = await prisma.order.findUnique({
@@ -20,12 +21,15 @@ export async function PATCH(
     });
 
     if (!order) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "This order could not be found — it may have been deleted. Refresh the page." },
+        { status: 404 }
+      );
     }
 
     if (!isValidTransition(order.status, status)) {
       return NextResponse.json(
-        { error: `Cannot transition from ${order.status} to ${status}` },
+        { error: `An order that is "${order.status}" can't be moved straight to "${status}". Follow the steps in order.` },
         { status: 400 }
       );
     }
@@ -65,7 +69,6 @@ export async function PATCH(
 
     return NextResponse.json({ status: updatedOrder?.status, history: updatedOrder?.history });
   } catch (error) {
-    console.error("Status update error:", error);
-    return NextResponse.json({ error: "Failed to update status" }, { status: 500 });
+    return errorResponse(error, "order status");
   }
 }

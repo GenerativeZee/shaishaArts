@@ -32,17 +32,33 @@ const FALLBACK_HERO_IMAGES = [
 ];
 
 export default async function HomePage() {
-  const [featuredRes, bestsellersRes, heroImagesRes, offerRes] = await Promise.allSettled([
+  const [featuredRes, bestsellersRes, heroImagesRes, offerRes, coverProductsRes] = await Promise.allSettled([
     prisma.product.findMany({ where: { isFeatured: true, isActive: true }, ...productInclude, take: 4 }),
     prisma.product.findMany({ where: { isBestseller: true, isActive: true }, ...productInclude, take: 4 }),
     prisma.heroImage.findMany({ orderBy: { order: "asc" }, take: 4 }),
     prisma.offer.findFirst(),
+    prisma.product.findMany({
+      where: { isCollectionCover: true, isActive: true },
+      select: { images: true, category: { select: { slug: true } } },
+    }),
   ]);
 
   const featuredProducts = withReviewStats(featuredRes.status === "fulfilled" ? featuredRes.value : []);
   const bestSellers = withReviewStats(bestsellersRes.status === "fulfilled" ? bestsellersRes.value : []);
   const customHeroImages = heroImagesRes.status === "fulfilled" ? heroImagesRes.value : [];
   const offer = offerRes.status === "fulfilled" ? offerRes.value : null;
+
+  // Map of category slug -> first image of the product flagged as that category's tile cover.
+  const coverImageBySlug: Record<string, string> = {};
+  if (coverProductsRes.status === "fulfilled") {
+    for (const p of coverProductsRes.value) {
+      let firstImage: string | undefined;
+      try {
+        firstImage = (JSON.parse(p.images) as string[])[0];
+      } catch {}
+      if (firstImage && p.category?.slug) coverImageBySlug[p.category.slug] = firstImage;
+    }
+  }
   const heroImages = FALLBACK_HERO_IMAGES.map((fallback, idx) => ({
     url: customHeroImages[idx]?.url || fallback.url,
     alt: fallback.alt,
@@ -200,7 +216,7 @@ export default async function HomePage() {
             >
               <div className="aspect-square w-full overflow-hidden rounded-xl bg-rose-50/30">
                 <img
-                  src={col.image}
+                  src={coverImageBySlug[col.slug] || col.image}
                   alt={col.name}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { errorResponse } from "@/lib/api-error";
 
 const CONFIRMED_STATUSES = [
   "CONFIRMED","IN_PRODUCTION","PACKED","SHIPPED","OUT_FOR_DELIVERY","DELIVERED",
@@ -39,7 +40,6 @@ export async function GET() {
       recentOrders: orders,
     });
   } catch (error) {
-    console.error("Dashboard error:", error);
-    return NextResponse.json({ error: "Failed to load dashboard" }, { status: 500 });
+    return errorResponse(error, "dashboard");
   }
 }

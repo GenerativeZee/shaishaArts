@@ -101,18 +101,20 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 ))}
               </div>
               <div className="border-t border-gray-100 mt-4 pt-4 space-y-1.5">
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Subtotal</span>
+                  <span>₹{order.totalAmount + order.discountAmount - order.shippingFee}</span>
+                </div>
                 {order.discountAmount > 0 && (
-                  <>
-                    <div className="flex justify-between text-sm text-gray-500">
-                      <span>Subtotal</span>
-                      <span>₹{order.totalAmount + order.discountAmount}</span>
-                    </div>
-                    <div className="flex justify-between text-sm text-emerald-600 font-semibold">
-                      <span>Discount {order.couponCode ? `(${order.couponCode})` : ""}</span>
-                      <span>−₹{order.discountAmount}</span>
-                    </div>
-                  </>
+                  <div className="flex justify-between text-sm text-emerald-600 font-semibold">
+                    <span>Discount {order.couponCode ? `(${order.couponCode})` : ""}</span>
+                    <span>−₹{order.discountAmount}</span>
+                  </div>
                 )}
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Shipping</span>
+                  <span>{order.shippingFee > 0 ? `₹${order.shippingFee}` : "FREE"}</span>
+                </div>
                 <div className="flex justify-between font-bold text-gray-900">
                   <span>Total</span>
                   <span>₹{order.totalAmount}</span>

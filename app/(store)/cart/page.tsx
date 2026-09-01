@@ -5,10 +5,14 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
-import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
+import { FREE_SHIPPING_THRESHOLD, MIN_ORDER_VALUE, MIN_ORDER_MESSAGE, shippingFeeFor } from "@/lib/constants";
 
 export default function CartPage() {
   const { items, updateQty, removeFromCart, cartTotal, clearCart, isLoaded } = useCart();
+
+  const shipping = shippingFeeFor(cartTotal);
+  const belowMinimum = cartTotal < MIN_ORDER_VALUE;
+  const grandTotal = cartTotal + shipping;
 
   if (!isLoaded) {
     return (
@@ -138,22 +142,52 @@ export default function CartPage() {
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between items-center font-bold text-gray-900 text-lg mb-3">
-                <span>Total</span>
-                <span className="text-[#8B1A4A]">₹{cartTotal}</span>
+              <div className="space-y-2 text-sm mb-3">
+                <div className="flex justify-between text-gray-500">
+                  <span>Subtotal</span>
+                  <span className="font-semibold text-gray-700">₹{cartTotal}</span>
+                </div>
+                <div className="flex justify-between text-gray-500">
+                  <span>Shipping</span>
+                  {shipping === 0 ? (
+                    <span className="font-semibold text-emerald-600">FREE 🎉</span>
+                  ) : (
+                    <span className="font-semibold text-gray-700">₹{shipping}</span>
+                  )}
+                </div>
               </div>
 
-              <div className="mb-5 text-xs font-medium rounded-xl px-3 py-2.5 bg-rose-50 text-[#8B1A4A]">
+              <div className="flex justify-between items-center font-bold text-gray-900 text-lg mb-3 border-t border-rose-50 pt-3">
+                <span>Total</span>
+                <span className="text-[#8B1A4A]">₹{grandTotal}</span>
+              </div>
+
+              <div className="mb-4 text-xs font-medium rounded-xl px-3 py-2.5 bg-rose-50 text-[#8B1A4A]">
                 {cartTotal >= FREE_SHIPPING_THRESHOLD
                   ? "🎉 Your order qualifies for FREE shipping!"
-                  : `🚚 Add ₹${FREE_SHIPPING_THRESHOLD - cartTotal} more to get FREE shipping (over ₹${FREE_SHIPPING_THRESHOLD})`}
+                  : `🚚 Flat ₹${shipping} shipping — add ₹${FREE_SHIPPING_THRESHOLD - cartTotal} more to get FREE shipping (over ₹${FREE_SHIPPING_THRESHOLD})`}
               </div>
 
-              <Link href="/checkout">
-                <Button className="w-full bg-[#8B1A4A] hover:bg-[#72123b] text-white py-3 rounded-full font-bold shadow-md flex items-center gap-2 justify-center">
-                  Proceed to Checkout <ArrowRight className="w-4 h-4" />
+              {belowMinimum && (
+                <div className="mb-4 text-xs font-bold rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200 text-amber-800">
+                  ⚠️ {MIN_ORDER_MESSAGE}
+                </div>
+              )}
+
+              {belowMinimum ? (
+                <Button
+                  disabled
+                  className="w-full bg-[#8B1A4A] text-white py-3 rounded-full font-bold shadow-md flex items-center gap-2 justify-center opacity-60 cursor-not-allowed"
+                >
+                  Minimum order ₹{MIN_ORDER_VALUE}
                 </Button>
-              </Link>
+              ) : (
+                <Link href="/checkout">
+                  <Button className="w-full bg-[#8B1A4A] hover:bg-[#72123b] text-white py-3 rounded-full font-bold shadow-md flex items-center gap-2 justify-center">
+                    Proceed to Checkout <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              )}
               <Link
                 href="/shop"
                 className="block text-center text-sm text-gray-400 hover:text-[#8B1A4A] mt-3"

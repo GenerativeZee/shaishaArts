@@ -21,6 +21,7 @@ interface OrderData {
   totalAmount: number;
   couponCode?: string | null;
   discountAmount?: number;
+  shippingFee?: number;
   status: string;
   paymentMethod: string;
   paymentScreenshot?: string;
@@ -188,6 +189,7 @@ export default function OrderConfirmationPage() {
     code: order.code,
     items: order.items,
     total: order.totalAmount,
+    shippingFee: order.shippingFee,
     giftMessage: order.giftMessage,
   });
 
@@ -217,18 +219,28 @@ export default function OrderConfirmationPage() {
               </div>
             ))}
           </div>
-          {(order.discountAmount ?? 0) > 0 && (
-            <div className="space-y-1.5 mb-3 text-sm">
-              <div className="flex justify-between text-gray-500">
-                <span>Subtotal</span>
-                <span>₹{order.totalAmount + (order.discountAmount ?? 0)}</span>
-              </div>
+          <div className="space-y-1.5 mb-3 text-sm">
+            <div className="flex justify-between text-gray-500">
+              <span>Subtotal</span>
+              <span>
+                ₹{order.totalAmount + (order.discountAmount ?? 0) - (order.shippingFee ?? 0)}
+              </span>
+            </div>
+            {(order.discountAmount ?? 0) > 0 && (
               <div className="flex justify-between text-emerald-600 font-semibold">
                 <span>Discount {order.couponCode ? `(${order.couponCode})` : ""}</span>
                 <span>−₹{order.discountAmount}</span>
               </div>
+            )}
+            <div className="flex justify-between text-gray-500">
+              <span>Shipping</span>
+              {(order.shippingFee ?? 0) === 0 ? (
+                <span className="text-emerald-600 font-semibold">FREE 🎉</span>
+              ) : (
+                <span>₹{order.shippingFee}</span>
+              )}
             </div>
-          )}
+          </div>
           <div className="flex justify-between font-bold text-gray-900 text-lg">
             <span>Total to Pay</span>
             <span className="text-[#8B1A4A]">₹{order.totalAmount}</span>

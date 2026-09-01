@@ -24,10 +24,12 @@ export function buildOrderMessage(o: {
   code: string;
   items: OrderItem[];
   total: number;
+  shippingFee?: number | null;
   giftMessage?: string | null;
 }): { text: string; link: string } {
   const lines = o.items.map((i) => `• ${i.name} x ${i.qty}`).join("\n");
   const giftLine = o.giftMessage ? `\n\n🎁 Gift Message: "${o.giftMessage}"` : "";
+  const shippingLine = o.shippingFee && o.shippingFee > 0 ? `\n🚚 Shipping: ₹${o.shippingFee}` : "";
   const text = `Hello Shaisha Arts! 🌸
 
 I would like to place an order.
@@ -36,7 +38,7 @@ I would like to place an order.
 
 Items:
 ${lines}
-
+${shippingLine}
 💰 Total: ₹${o.total}${giftLine}
 
 Payment Screenshot Attached.`;

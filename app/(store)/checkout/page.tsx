@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, CheckCircle2, XCircle, Gift, Tag, Loader2 } from "lucide-react";
-import { FREE_SHIPPING_THRESHOLD } from "@/lib/constants";
+import { FREE_SHIPPING_THRESHOLD, MIN_ORDER_VALUE, MIN_ORDER_MESSAGE, shippingFeeFor } from "@/lib/constants";
 
 const INDIAN_STATES = [
   "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat",
@@ -91,11 +91,14 @@ export default function CheckoutPage() {
   };
 
   const discountAmount = appliedCoupon?.discountAmount || 0;
-  const finalTotal = cartTotal - discountAmount;
+  const shipping = shippingFeeFor(cartTotal);
+  const belowMinimum = cartTotal < MIN_ORDER_VALUE;
+  const finalTotal = cartTotal - discountAmount + shipping;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) { toast.error("Your cart is empty."); return; }
+    if (belowMinimum) { toast.error(MIN_ORDER_MESSAGE); return; }
     if (!phoneValid) { toast.error("Please enter a valid 10-digit phone number."); return; }
     if (!pincodeValid) { toast.error("Please enter a valid 6-digit pincode."); return; }
 
@@ -144,7 +147,7 @@ export default function CheckoutPage() {
             <ArrowLeft className="w-4 h-4" /> Back to Cart
           </Link>
           <h1 className="font-serif text-4xl font-bold text-gray-900">Checkout</h1>
-          <p className="text-gray-500 text-sm mt-1">{items.length} item{items.length !== 1 ? "s" : ""} · ₹{cartTotal} total</p>
+          <p className="text-gray-500 text-sm mt-1">{items.length} item{items.length !== 1 ? "s" : ""} · ₹{cartTotal} subtotal</p>
         </div>
       </section>
 
@@ -363,10 +366,10 @@ export default function CheckoutPage() {
                   )}
                   <div className="flex justify-between text-gray-500">
                     <span>Shipping</span>
-                    {cartTotal >= FREE_SHIPPING_THRESHOLD ? (
+                    {shipping === 0 ? (
                       <span className="text-emerald-600 font-semibold">FREE 🎉</span>
                     ) : (
-                      <span className="text-gray-500 font-medium">Quoted on confirmation</span>
+                      <span className="text-gray-700 font-semibold">₹{shipping}</span>
                     )}
                   </div>
                   {cartTotal < FREE_SHIPPING_THRESHOLD && (
@@ -381,11 +384,17 @@ export default function CheckoutPage() {
                   <span className="text-[#8B1A4A]">₹{finalTotal}</span>
                 </div>
 
+                {belowMinimum && (
+                  <div className="mb-3 text-xs font-bold rounded-xl px-3 py-2.5 bg-amber-50 border border-amber-200 text-amber-800">
+                    ⚠️ {MIN_ORDER_MESSAGE}
+                  </div>
+                )}
+
                 <Button
-                  type="submit" disabled={loading}
-                  className="w-full bg-[#8B1A4A] hover:bg-[#72123b] text-white py-3.5 rounded-full font-bold shadow-md text-base transition-all hover:scale-[1.02] active:scale-95"
+                  type="submit" disabled={loading || belowMinimum}
+                  className="w-full bg-[#8B1A4A] hover:bg-[#72123b] text-white py-3.5 rounded-full font-bold shadow-md text-base transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  {loading ? "Placing Order..." : "Place Order 🌸"}
+                  {loading ? "Placing Order..." : belowMinimum ? `Minimum order ₹${MIN_ORDER_VALUE}` : "Place Order 🌸"}
                 </Button>
                 <p className="text-xs text-gray-400 text-center mt-3">
                   Payment is completed on the next step

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { generateOrderCode } from "@/lib/orderCode";
 import { computeDiscount, couponMatches } from "@/lib/coupon";
 import { effectivePrice } from "@/lib/price";
+import { MIN_ORDER_VALUE, shippingFeeFor } from "@/lib/constants";
 
 export async function POST(req: NextRequest) {
   try {
@@ -91,6 +92,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Enforce the minimum order value against the items subtotal
+    if (computedTotal < MIN_ORDER_VALUE) {
+      return NextResponse.json(
+        { error: `Minimum order value is ₹${MIN_ORDER_VALUE}. Please add more items before checking out.` },
+        { status: 400 }
+      );
+    }
+
     // Validate coupon and compute discount server-side (never trust client-sent amounts)
     let discountAmount = 0;
     let appliedCouponCode: string | null = null;
@@ -102,7 +111,10 @@ export async function POST(req: NextRequest) {
       discountAmount = computeDiscount(offer!, computedTotal);
       appliedCouponCode = offer!.code;
     }
-    const finalTotal = computedTotal - discountAmount;
+
+    // Flat shipping fee, waived once the items subtotal clears the free-shipping threshold
+    const shippingFee = shippingFeeFor(computedTotal);
+    const finalTotal = computedTotal - discountAmount + shippingFee;
 
     // Generate SA#### code
     const orderCode = await generateOrderCode();
@@ -123,6 +135,7 @@ export async function POST(req: NextRequest) {
           totalAmount: finalTotal,
           couponCode: appliedCouponCode,
           discountAmount,
+          shippingFee,
           paymentMethod,
           giftMessage: giftMessage || null,
           status: "RECEIVED",
@@ -140,7 +153,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { code: newOrder.code, totalAmount: newOrder.totalAmount, status: newOrder.status },
+      { code: newOrder.code, totalAmount: newOrder.totalAmount, shippingFee: newOrder.shippingFee, status: newOrder.status },
       { status: 201 }
     );
   } catch (error) {

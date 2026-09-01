@@ -1,6 +1,20 @@
-// Orders at or above this cart subtotal (₹) ship free; below it, shipping is
-// quoted when the order is confirmed on WhatsApp.
+// Orders at or above this cart subtotal (₹) ship free; below it, a flat
+// shipping fee is added to the order total.
 export const FREE_SHIPPING_THRESHOLD = 999;
+
+// Flat shipping fee (₹) charged on orders below FREE_SHIPPING_THRESHOLD.
+export const SHIPPING_FEE = 70;
+
+// Minimum items subtotal (₹) required before an order can be placed.
+export const MIN_ORDER_VALUE = 100;
+
+// Shown to customers when their cart subtotal is below MIN_ORDER_VALUE.
+export const MIN_ORDER_MESSAGE = `Minimum order value is ₹${MIN_ORDER_VALUE}. Please add a little more to your cart before checking out.`;
+
+/** Shipping charged for a given items subtotal — free at/above the threshold. */
+export function shippingFeeFor(subtotal: number): number {
+  return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+}
 
 export const ORDER_STATUSES = [
   "RECEIVED",

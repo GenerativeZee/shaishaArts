@@ -53,9 +53,10 @@ model Order {
   state             String
   pincode           String
   items             String              // JSON [{productId,name,qty,price}]
-  totalAmount       Int                 // final payable amount, after discount
+  totalAmount       Int                 // final payable amount, after discount + shipping
   couponCode        String?
   discountAmount    Int                 @default(0)
+  shippingFee       Int                 @default(0) // flat shipping added to totalAmount; 0 when order shipped free
   paymentMethod     String              @default("QR") // QR | WHATSAPP
   paymentScreenshot String?             // Cloudinary URL
   giftMessage       String?

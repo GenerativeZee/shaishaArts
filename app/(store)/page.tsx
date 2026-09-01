@@ -68,6 +68,7 @@ export default async function HomePage() {
     { name: "Keychains", slug: "keychains", image: "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=500" },
     { name: "Scrunchies", slug: "accessories", image: "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?w=500" },
     { name: "Accessories", slug: "accessories", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500" },
+    { name: "Macrame", slug: "macrame", image: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500" },
     { name: "Stationery", slug: "stationery", image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=500" },
     { name: "Jewelry", slug: "jewelry", image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500" },
     { name: "Hampers", slug: "hampers", image: "https://images.unsplash.com/photo-1549465220-1a8b9238f519?w=500" },

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import StatusTimeline from "@/components/store/StatusTimeline";
 import OrderStatusUpdater from "@/components/admin/OrderStatusUpdater";
+import DeleteOrderButton from "@/components/admin/DeleteOrderButton";
 import { prisma } from "@/lib/prisma";
 import { STATUS_COLORS } from "@/lib/constants";
 import { ArrowLeft } from "lucide-react";
@@ -162,6 +163,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 history={order.history.map((h) => ({ status: h.status, changedAt: h.changedAt.toISOString() }))}
               />
             </div>
+
+            {/* Delete */}
+            <DeleteOrderButton orderId={order.id} orderCode={order.code} />
           </div>
         </div>
     </>

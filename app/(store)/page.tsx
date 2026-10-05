@@ -295,10 +295,10 @@ export default async function HomePage() {
       {/* 5. ABOUT SHAISHA ARTS SNIPPET */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Left Handcrafted Image */}
-        <div className="relative rounded-3xl overflow-hidden border-8 border-white shadow-xl rotate-[-2deg] aspect-[4/3] max-w-[500px] mx-auto bg-rose-50">
+        <div className="relative rounded-3xl overflow-hidden border-8 border-white shadow-xl rotate-[-2deg] aspect-[3/4] max-w-sm mx-auto bg-rose-50">
           <img
-            src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600"
-            alt="Handmade Art Creation Heart"
+            src="/about-photo.jpg"
+            alt="Shaisha Arts Founder"
             className="w-full h-full object-cover"
           />
           <div className="absolute bottom-4 right-4 bg-white/95 px-4 py-2 rounded-xl border border-rose-100 text-xs font-bold text-[#8B1A4A] shadow-sm">

@@ -81,10 +81,8 @@ export default async function HomePage() {
     <div className="w-full bg-[#FFF5F8]">
       {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden py-16 lg:py-24 border-b border-rose-100/50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white via-rose-50/30 to-[#FFF5F8]">
-        {/* Floating Heart Ornaments */}
-        <div className="absolute top-10 left-10 text-rose-300/40 text-2xl animate-bounce">❤️</div>
+        {/* Floating Ornament */}
         <div className="absolute bottom-16 right-12 text-rose-300/40 text-xl animate-pulse">🌸</div>
-        <div className="absolute top-20 right-[25%] text-rose-300/30 text-lg animate-pulse">✨</div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Text Box */}
